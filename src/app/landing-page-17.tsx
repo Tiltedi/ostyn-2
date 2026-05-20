@@ -128,6 +128,112 @@ const HeroSection = () => {
     );
 };
 
+type Stijl = {
+    id: string;
+    title: string;
+    subtitle: string;
+    image: string;
+    tag: string;
+};
+
+const stijlen: Stijl[] = [
+    {
+        id: "s1",
+        title: "Houten poolhouse in afrormosia",
+        subtitle:
+            "Massief Afrormosia hardhout dat met de jaren prachtig verzilvert. Decennialang weerbestendig, met minimaal onderhoud.",
+        image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&h=900&fit=crop&q=80",
+        tag: "Afrormosia",
+    },
+    {
+        id: "s2",
+        title: "Poolhouse in Trespa met lamellendak",
+        subtitle:
+            "Strakke Trespa-panelen in een hedendaagse silhouet. Het verstelbaar lamellendak doseert zon en schaduw naar wens.",
+        image: "https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?w=1200&h=900&fit=crop&q=80",
+        tag: "Trespa",
+    },
+    {
+        id: "s3",
+        title: "Afrormosia hardhout en Aquapanel",
+        subtitle:
+            "Warm hardhout in dialoog met crisp wit Aquapanel. Klassieke materialen in een eigentijdse compositie.",
+        image: "https://images.unsplash.com/photo-1613553421875-b34a4a2da6ce?w=1200&h=900&fit=crop&q=80",
+        tag: "Hybride",
+    },
+    {
+        id: "s4",
+        title: "Poolhouse met overkapping en berging",
+        subtitle:
+            "Lounge, technische ruimte en buitenkeuken in één doorgecomponeerd volume. Functie zonder concessie aan de lijn.",
+        image: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=1200&h=900&fit=crop&q=80",
+        tag: "Functioneel",
+    },
+    {
+        id: "s5",
+        title: "Moderne tuinkamer in thermowood",
+        subtitle:
+            "Hittebehandeld thermowood met een diepe, matte tint. Vormstabiel, duurzaam, en perfect voor een minimalistische signatuur.",
+        image: "https://images.unsplash.com/photo-1591474200742-8e512e6f98f8?w=1200&h=900&fit=crop&q=80",
+        tag: "Thermowood",
+    },
+    {
+        id: "s6",
+        title: "Poolhouse in witte crepi en moabi",
+        subtitle:
+            "Strakke witte crepi-gevel met warme moabi houtaccenten. Mediterrane rust met Belgische precisie in de afwerking.",
+        image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=900&fit=crop&q=80",
+        tag: "Crepi & Moabi",
+    },
+];
+
+const StijlenSection = () => {
+    return (
+        <section id="stijlen" className="bg-white py-16 md:py-24" aria-labelledby="stijlen-titel">
+            <div className="mx-auto max-w-container px-4 md:px-8">
+                <div className="flex max-w-3xl flex-col gap-4 md:gap-5">
+                    <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">
+                        Onze stijlen
+                    </p>
+                    <h2
+                        id="stijlen-titel"
+                        className="text-display-sm font-medium text-balance text-black md:text-display-md"
+                    >
+                        Zes stijlen, <strong className="font-extrabold">één signatuur</strong>.
+                    </h2>
+                    <p className="text-lg text-black">
+                        Van warm hardhout tot strakke crepi — elk poolhouse wordt op maat ontworpen rond de
+                        architectuur van uw woning en de materialen die u kiest.
+                    </p>
+                </div>
+
+                <ul className="mt-12 grid grid-cols-1 gap-8 md:mt-16 md:grid-cols-2 md:gap-x-6 md:gap-y-12 lg:grid-cols-3 lg:gap-x-8">
+                    {stijlen.map((s) => (
+                        <li key={s.id} className="group flex flex-col">
+                            <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-[#F2F2F2]">
+                                <img
+                                    src={s.image}
+                                    alt={s.title}
+                                    className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                            </div>
+                            <div className="mt-5 flex flex-col">
+                                <span className="self-start rounded-full bg-[#C19848] px-3 py-1 text-xs font-semibold text-white">
+                                    {s.tag}
+                                </span>
+                                <h3 className="mt-3 text-xl font-semibold text-balance text-black md:text-display-xs">
+                                    {s.title}
+                                </h3>
+                                <p className="mt-2 text-md text-black/70">{s.subtitle}</p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </section>
+    );
+};
+
 type Promise = { title: string; body: string };
 const promises: Promise[] = [
     {
@@ -997,6 +1103,7 @@ const LandingPage17 = () => {
             <OstynHeader activeProduct="poolhouse" />
             <main id="hoofdinhoud">
                 <HeroSection />
+                <StijlenSection />
                 <PromiseSection />
                 <SectionDivider />
                 <RealisatiesSection />
