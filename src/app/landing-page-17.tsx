@@ -419,6 +419,53 @@ const RealisatiesSection = () => {
     );
 };
 
+const InspiratieboekSection = () => {
+    return (
+        <section
+            id="inspiratieboek"
+            className="bg-[#C19848] py-12 md:py-16"
+            aria-labelledby="inspiratieboek-titel"
+        >
+            <div className="mx-auto grid max-w-container grid-cols-1 items-center gap-8 px-4 md:px-8 lg:grid-cols-12 lg:gap-12">
+                <div className="flex justify-center lg:col-span-5 lg:justify-start">
+                    <img
+                        src="/inspiratieboek.png"
+                        alt="Cover van het Ostyn inspiratieboek"
+                        className="w-full max-w-md drop-shadow-2xl"
+                    />
+                </div>
+                <div className="flex flex-col lg:col-span-7">
+                    <p className="text-sm font-semibold tracking-wider text-white uppercase md:text-md">
+                        Inspiratieboek
+                    </p>
+                    <h2
+                        id="inspiratieboek-titel"
+                        className="mt-3 text-display-sm font-medium text-balance text-white md:text-display-md"
+                    >
+                        Bladert u <strong className="font-extrabold">liever eerst</strong> door onze realisaties?
+                    </h2>
+                    <p className="mt-4 text-lg text-white md:mt-5">
+                        Tientallen poolhouses, materialen en stijlen in één bundel — gratis, vrijblijvend en
+                        rechtstreeks in uw mailbox.
+                    </p>
+                    <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row">
+                        <Button
+                            href="https://ostyn.be/inspiratieboek"
+                            target="_blank"
+                            rel="noopener"
+                            size="xl"
+                            iconTrailing={ArrowUpRight}
+                            className="!bg-white !text-black hover:!bg-white/90 *:data-icon:!text-black/60 hover:*:data-icon:!text-black/80"
+                        >
+                            Download het inspiratieboek
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
 type Pillar = { figure: string; eyebrow: string; title: string; body: ReactNode };
 const pillars: Pillar[] = [
     {
@@ -975,12 +1022,10 @@ const OfferteSection = () => {
                 </form>
             </div>
 
-            <p id="inspiratieboek" className="mx-auto mt-12 max-w-container px-4 text-center text-md text-black md:px-8">
+            <p className="mx-auto mt-12 max-w-container px-4 text-center text-md text-black md:px-8">
                 Liever eerst wat inspiratie?{" "}
                 <a
-                    href="https://ostyn.be/inspiratieboek"
-                    target="_blank"
-                    rel="noopener"
+                    href="#inspiratieboek"
                     className="font-semibold text-black underline underline-offset-4"
                 >
                     Download het inspiratieboek →
@@ -1107,7 +1152,7 @@ const LandingPage17 = () => {
                 <PromiseSection />
                 <SectionDivider />
                 <RealisatiesSection />
-                <SectionDivider />
+                <InspiratieboekSection />
                 <WaaromSection />
                 <ProcesSection />
                 <ShowroomSection />
