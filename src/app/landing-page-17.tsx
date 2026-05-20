@@ -1,62 +1,129 @@
 "use client";
 
-import { useEffect, useRef, type FC, type ReactNode } from "react";
+import { useState, type FC, type ReactNode } from "react";
 import {
-    ArrowLeft,
     ArrowRight,
     ArrowUpRight,
-    Calendar,
     Check,
     ChevronDown,
-    Clock,
+    ChevronRight,
     Mail01,
     MarkerPin01,
     Menu01,
     Phone,
-    Send01,
     Star01,
+    X,
 } from "@untitledui/icons";
-import { Carousel } from "@/components/application/carousel/carousel-base";
-import { Button } from "@/components/base/buttons/button";
-import { Checkbox } from "@/components/base/checkbox/checkbox";
-import { Input } from "@/components/base/input/input";
-import { TextArea } from "@/components/base/textarea/textarea";
-import { SectionDivider } from "@/components/shared-assets/section-divider";
 import { cx } from "@/utils/cx";
 
-const productNav = [
-    { label: "tuinhuis", href: "#" },
-    { label: "carport", href: "#" },
-    { label: "garage", href: "#" },
-    { label: "poolhouse", href: "#", active: true },
-    { label: "veranda", href: "#" },
-    { label: "pergola", href: "#" },
-    { label: "realisaties", href: "#realisaties" },
-];
+/*
+ * Ostyn — Dutch (BE/Vlaams) standalone landing page.
+ *
+ * Hard brand rules (from ostyn.be):
+ *  - Palette: #FFFFFF, #F2F2F2, #000000, #C19848 only.
+ *  - Sharp corners everywhere — no border-radius.
+ *  - Typography: "Shape, sans-serif" (set in theme.css; Inter as fallback).
+ *  - Emphasis = inline <strong> within sentences, never color.
+ *  - Formal "u"-vorm throughout.
+ */
 
-const OstynLogo = ({ className }: { className?: string }) => (
-    <img src="/logo-ostyn.png" alt="Ostyn" className={cx("h-11 w-auto md:h-14", className)} />
+const GOLD = "#C19848";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared primitives — sharp-cornered CTAs and section wrappers.
+
+const PrimaryCTA: FC<{
+    href: string;
+    children: ReactNode;
+    className?: string;
+    iconTrailing?: FC<{ className?: string }>;
+}> = ({ href, children, className, iconTrailing: Icon = ArrowRight }) => (
+    <a
+        href={href}
+        className={cx(
+            "inline-flex items-center justify-center gap-2 bg-[#C19848] px-8 py-3.5 text-md font-semibold text-white transition outline-[#C19848] hover:bg-[#A6822E] focus-visible:outline-2 focus-visible:outline-offset-2",
+            className,
+        )}
+    >
+        <span>{children}</span>
+        <Icon className="size-4" aria-hidden="true" />
+    </a>
 );
 
-const OstynHeader = () => {
+const SecondaryCTA: FC<{ href: string; children: ReactNode; className?: string }> = ({ href, children, className }) => (
+    <a
+        href={href}
+        className={cx(
+            "inline-flex items-center gap-1.5 border-b-2 border-[#C19848] pb-1 text-md font-semibold text-[#C19848] outline-[#C19848] transition hover:border-[#A6822E] hover:text-[#A6822E] focus-visible:outline-2 focus-visible:outline-offset-4",
+            className,
+        )}
+    >
+        <span>{children}</span>
+        <ArrowRight className="size-4" aria-hidden="true" />
+    </a>
+);
+
+const Section: FC<{
+    id?: string;
+    bg?: "white" | "gray" | "gold";
+    children: ReactNode;
+    className?: string;
+    "aria-labelledby"?: string;
+}> = ({ id, bg = "white", children, className, ...rest }) => {
+    const bgClass = bg === "white" ? "bg-white" : bg === "gray" ? "bg-[#F2F2F2]" : "bg-[#C19848]";
+    return (
+        <section
+            id={id}
+            className={cx(bgClass, "py-20 md:py-28", className)}
+            aria-labelledby={rest["aria-labelledby"]}
+        >
+            <div className="mx-auto max-w-container px-5 md:px-8">{children}</div>
+        </section>
+    );
+};
+
+const Eyebrow: FC<{ children: ReactNode; tone?: "black" | "white" }> = ({ children, tone = "black" }) => (
+    <p
+        className={cx(
+            "text-sm font-semibold tracking-[0.22em] uppercase",
+            tone === "white" ? "text-white" : "text-[#C19848]",
+        )}
+    >
+        {children}
+    </p>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HEADER — clean, sticky, white. Logo + nav + primary CTA.
+
+const navLinks = [
+    { label: "Poolhouse", href: "#aanbod" },
+    { label: "Materialen", href: "#materialen" },
+    { label: "Realisaties", href: "#realisaties" },
+    { label: "Showroom", href: "#showroom" },
+    { label: "Over Ostyn", href: "#waarom" },
+];
+
+const OstynLogo: FC<{ className?: string }> = ({ className }) => (
+    <img src="/logo-ostyn.png" alt="Ostyn" className={cx("h-12 w-auto md:h-14", className)} />
+);
+
+const Header = () => {
+    const [open, setOpen] = useState(false);
     return (
         <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white">
-            <div className="mx-auto flex h-16 max-w-container items-center justify-between gap-6 px-4 md:h-20 md:px-8">
-                <a href="#" aria-label="Ostyn — startpagina" className="flex items-center">
+            <div className="mx-auto flex h-20 max-w-container items-center justify-between gap-6 px-5 md:h-24 md:px-8">
+                <a href="#top" aria-label="Ostyn — startpagina" className="flex items-center">
                     <OstynLogo />
                 </a>
 
-                <nav aria-label="Hoofdnavigatie" className="hidden md:block">
-                    <ul className="flex items-center gap-6 lg:gap-8">
-                        {productNav.map((item) => (
+                <nav aria-label="Hoofdnavigatie" className="hidden lg:block">
+                    <ul className="flex items-center gap-8">
+                        {navLinks.map((item) => (
                             <li key={item.label}>
                                 <a
                                     href={item.href}
-                                    className={cx(
-                                        "text-md text-black outline-focus-ring transition hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2",
-                                        item.active && "font-bold",
-                                    )}
-                                    aria-current={item.active ? "page" : undefined}
+                                    className="text-md font-semibold text-black outline-[#C19848] transition hover:text-[#C19848] focus-visible:outline-2 focus-visible:outline-offset-4"
                                 >
                                     {item.label}
                                 </a>
@@ -65,951 +132,727 @@ const OstynHeader = () => {
                     </ul>
                 </nav>
 
-                <div className="flex flex-col items-end gap-1">
-                    <div className="hidden items-center gap-5 md:flex">
-                        <a
-                            href="#"
-                            className="flex items-center gap-1.5 text-xs text-black/60 outline-focus-ring transition hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2"
-                        >
-                            klantenportaal
-                            <ArrowUpRight className="size-3.5" aria-hidden="true" />
-                        </a>
-                        <button
-                            type="button"
-                            className="flex items-center gap-1 text-xs text-black/60 outline-focus-ring transition hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2"
-                        >
-                            nl
-                            <ChevronDown className="size-3.5" aria-hidden="true" />
-                        </button>
-                    </div>
-                    <div className="flex items-center gap-5">
-                        <a
-                            href="#offerte"
-                            className="text-md text-[#C19848] outline-focus-ring transition hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 max-md:hidden"
-                        >
-                            afspraak maken
-                        </a>
-                        <button
-                            type="button"
-                            aria-label="Menu openen"
-                            className="flex items-center justify-center p-1 outline-focus-ring transition hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
-                        >
-                            <Menu01 className="size-6 text-black" aria-hidden="true" />
-                        </button>
-                    </div>
+                <div className="flex items-center gap-4">
+                    <PrimaryCTA href="#offerte" className="hidden px-6 py-3 md:inline-flex">
+                        Vraag offerte
+                    </PrimaryCTA>
+                    <button
+                        type="button"
+                        aria-label={open ? "Menu sluiten" : "Menu openen"}
+                        aria-expanded={open}
+                        onClick={() => setOpen((v) => !v)}
+                        className="flex size-10 items-center justify-center text-black outline-[#C19848] transition hover:text-[#C19848] focus-visible:outline-2 focus-visible:outline-offset-2 lg:hidden"
+                    >
+                        {open ? <X className="size-6" aria-hidden="true" /> : <Menu01 className="size-6" aria-hidden="true" />}
+                    </button>
                 </div>
             </div>
+
+            {open && (
+                <div className="border-t border-black/10 bg-white lg:hidden">
+                    <ul className="mx-auto flex max-w-container flex-col gap-1 px-5 py-4">
+                        {navLinks.map((item) => (
+                            <li key={item.label}>
+                                <a
+                                    href={item.href}
+                                    onClick={() => setOpen(false)}
+                                    className="block py-3 text-md font-semibold text-black transition hover:text-[#C19848]"
+                                >
+                                    {item.label}
+                                </a>
+                            </li>
+                        ))}
+                        <li className="mt-3">
+                            <PrimaryCTA href="#offerte" className="w-full">
+                                Vraag offerte
+                            </PrimaryCTA>
+                        </li>
+                    </ul>
+                </div>
+            )}
         </header>
     );
 };
 
-const HeroSection = () => {
-    const canvasRef = useRef<HTMLDivElement>(null);
-    const imgRef = useRef<HTMLImageElement>(null);
+// ─────────────────────────────────────────────────────────────────────────────
+// HERO — aspiration first. Full-bleed photo, gold eyebrow, headline with bold words, primary CTA.
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        const img = imgRef.current;
-        if (!canvas || !img) return;
-
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-        let ticking = false;
-        const update = () => {
-            const rect = canvas.getBoundingClientRect();
-            if (rect.bottom > 0 && rect.top < window.innerHeight) {
-                img.style.transform = `translate3d(0, ${(-rect.top * 0.3).toFixed(1)}px, 0)`;
-            }
-            ticking = false;
-        };
-        const onScroll = () => {
-            if (ticking) return;
-            ticking = true;
-            requestAnimationFrame(update);
-        };
-
-        update();
-        window.addEventListener("scroll", onScroll, { passive: true });
-        window.addEventListener("resize", onScroll);
-        return () => {
-            window.removeEventListener("scroll", onScroll);
-            window.removeEventListener("resize", onScroll);
-        };
-    }, []);
-
-    return (
-        <section className="p-4 md:p-6 lg:p-8" aria-labelledby="hero-titel">
-            <div
-                ref={canvasRef}
-                className="relative isolate flex min-h-[calc(100svh-4rem-2rem)] flex-col justify-end overflow-hidden rounded-3xl md:min-h-[calc(100svh-5rem-3rem)] lg:min-h-[calc(100svh-5rem-4rem)]"
-            >
-                <img
-                    ref={imgRef}
-                    src="/hero.jpg"
-                    alt=""
-                    aria-hidden="true"
-                    className="absolute inset-x-0 -top-[20%] -z-10 h-[140%] w-full object-cover will-change-transform"
-                />
-                <div
-                    aria-hidden="true"
-                    className="absolute inset-0 -z-10 bg-gradient-to-t from-black/30 via-black/5 to-transparent"
-                />
-
-                <div className="flex p-4 md:p-6">
-                    <div className="flex flex-col gap-6 rounded-3xl bg-black/55 p-6 backdrop-blur-2xl backdrop-saturate-150 md:max-w-xl md:gap-8 md:p-8">
-                        <div>
-                            <p className="text-sm font-semibold tracking-[0.18em] text-[#C19848] uppercase md:text-md">
-                                expand your freedom
-                            </p>
-                            <h1
-                                id="hero-titel"
-                                className="mt-3 text-display-sm font-medium text-balance text-white md:text-display-md"
-                            >
-                                Een <strong className="font-extrabold">poolhouse op maat</strong>. In{" "}
-                                <strong className="font-extrabold">eigen atelier</strong> gebouwd, klaar in{" "}
-                                <strong className="font-extrabold">3 tot 6 maanden</strong>.
-                            </h1>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-3">
-                            <Button href="#offerte" size="md" iconTrailing={ArrowRight}>
-                                Vraag uw offerte
-                            </Button>
-                            <a
-                                href="#realisaties"
-                                aria-label="Bekijk onze realisaties"
-                                className="group flex shrink-0 gap-2 outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-4"
-                            >
-                                <img
-                                    src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400&h=400&fit=crop&q=80"
-                                    alt=""
-                                    aria-hidden="true"
-                                    className="size-12 shrink-0 rounded-2xl object-cover ring-1 ring-white/15 transition group-hover:scale-[1.05]"
-                                />
-                                <img
-                                    src="https://images.unsplash.com/photo-1505873242700-f289a29e1e0f?w=400&h=400&fit=crop&q=80"
-                                    alt=""
-                                    aria-hidden="true"
-                                    className="size-12 shrink-0 rounded-2xl object-cover ring-1 ring-white/15 transition group-hover:scale-[1.05]"
-                                />
-                            </a>
-                            <Button
-                                href="#realisaties"
-                                size="md"
-                                iconTrailing={ArrowUpRight}
-                                className="!bg-white !text-black hover:!bg-white/90"
-                            >
-                                Onze realisaties
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-};
-
-type Promise = { title: string; body: string };
-const promises: Promise[] = [
-    {
-        title: "3D-ontwerp en offerte vooraf",
-        body: "U ziet en weet wat u koopt, voor u tekent. Geen meerwerk halverwege.",
-    },
-    {
-        title: "Productie en plaatsing in één hand",
-        body: "Onze eigen vaklui, in ons atelier in Dottenijs. Geen onderaanneming, geen tussenpartij.",
-    },
-    {
-        title: "Nazorg door ons SAV-team",
-        body: "Bereikbaar, ook lang na de oplevering. Geen externe hotline.",
-    },
-];
-
-const PromiseSection = () => {
-    return (
-        <section className="bg-[#F2F2F2] py-16 md:py-24" aria-labelledby="belofte-titel">
-            <div className="mx-auto max-w-container px-4 md:px-8">
-                <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-                    <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Wat u krijgt</p>
-                    <h2
-                        id="belofte-titel"
-                        className="mt-3 text-display-sm font-medium text-balance text-black md:text-display-md"
-                    >
-                        Een <strong className="font-extrabold">premium</strong> poolhouse, op <strong className="font-extrabold">maat</strong> van uw woning ontworpen en in <strong className="font-extrabold">eigen atelier</strong> gebouwd.
-                    </h2>
-                    <p className="mt-4 text-lg text-black md:mt-5">
-                        Geen vijf aannemers op uw terrein. Geen ontwerper die naar een uitvoerder doorverwijst. Eén team, één
-                        prijsafspraak, één verantwoordelijke partner — ook jaren na de plaatsing.
-                    </p>
-                </div>
-
-                <ul className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-3 md:gap-8">
-                    {promises.map((item) => (
-                        <li key={item.title} className="flex flex-col items-start rounded-2xl bg-white p-8 md:p-10">
-                            <span aria-hidden="true" className="block h-0.5 w-10 bg-[#C19848]" />
-                            <h3 className="mt-8 text-xl font-semibold text-black md:text-display-xs">{item.title}</h3>
-                            <p className="mt-3 text-md text-black/70">{item.body}</p>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </section>
-    );
-};
-
-type Project = {
-    id: string;
-    title: string;
-    subtitle: string;
-    image: string;
-    tag: string;
-};
-
-const projects: Project[] = [
-    {
-        id: "p1",
-        title: "Modern minimalistisch",
-        subtitle: "Afrormosia hardhout, schuifpartijen op volle hoogte, plat dak.",
-        image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=900&h=1200&fit=crop&q=80",
-        tag: "Hedendaags",
-    },
-    {
-        id: "p2",
-        title: "Klassiek silhouet",
-        subtitle: "Trespa-panelen, zadeldak, geïntegreerde berging.",
-        image: "https://images.unsplash.com/photo-1505873242700-f289a29e1e0f?w=900&h=1200&fit=crop&q=80",
-        tag: "Klassiek",
-    },
-    {
-        id: "p3",
-        title: "Open architectuur",
-        subtitle: "Buitenkeuken, lounge en schaduwzone in één volume.",
-        image: "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=900&h=1200&fit=crop&q=80",
-        tag: "Open",
-    },
-    {
-        id: "p4",
-        title: "Strak en compact",
-        subtitle: "Aluminium accenten, vlakke gevel, geïntegreerd terras.",
-        image: "https://images.unsplash.com/photo-1564540583246-934409427776?w=900&h=1200&fit=crop&q=80",
-        tag: "Strak",
-    },
-    {
-        id: "p5",
-        title: "Hout en pleisterwerk",
-        subtitle: "Hybride stijl die aansluit bij een klassieke villa.",
-        image: "https://images.unsplash.com/photo-1600585154084-4e5fe7c39198?w=900&h=1200&fit=crop&q=80",
-        tag: "Hybride",
-    },
-    {
-        id: "p6",
-        title: "Schaduw en functie",
-        subtitle: "Overdekt terras, kleedruimte en buitendouche.",
-        image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900&h=1200&fit=crop&q=80",
-        tag: "Functioneel",
-    },
-];
-
-const RoundButton = ({
-    icon: Icon,
-    className,
-    ...props
-}: {
-    icon: FC<{ className?: string }>;
-    className?: string;
-    "aria-label"?: string;
-}) => (
-    <Button
-        {...props}
-        color="link-gray"
-        className={cx(
-            "group flex size-12 items-center justify-center rounded-full bg-white ring-1 ring-black/15 backdrop-blur transition duration-100 ease-linear ring-inset hover:bg-[#F2F2F2] md:size-14",
-            className,
-        )}
+const Hero = () => (
+    <section
+        id="top"
+        aria-labelledby="hero-titel"
+        className="relative isolate flex min-h-[680px] items-center overflow-hidden bg-black md:min-h-[760px]"
     >
-        <Icon className="size-5 text-black transition-inherit-all md:size-6" />
-    </Button>
+        <img
+            src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=2200&q=85&auto=format&fit=crop"
+            alt="Een hedendaagse Ostyn poolhouse met zwembad in een groene tuin, gefotografeerd in zacht namiddaglicht"
+            className="absolute inset-0 -z-10 size-full object-cover"
+        />
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-black/75 via-black/45 to-black/15" />
+
+        <div className="mx-auto w-full max-w-container px-5 py-24 md:px-8 md:py-32">
+            <div className="max-w-2xl">
+                <Eyebrow>Expand your freedom</Eyebrow>
+                <h1
+                    id="hero-titel"
+                    className="mt-5 text-4xl leading-tight font-medium text-balance text-white md:text-6xl md:leading-[1.05]"
+                >
+                    De poolhouse van uw <strong className="font-extrabold">dromen</strong>, volledig op{" "}
+                    <strong className="font-extrabold">maat</strong> ontworpen en gebouwd.
+                </h1>
+                <p className="mt-6 max-w-xl text-lg text-white/90 md:text-xl">
+                    Ostyn ontwerpt, produceert en plaatst exclusieve poolhouses — sinds 1992, in eigen atelier, door onze
+                    eigen vakmensen. Eén partner van eerste schets tot sleutel-op-de-deur.
+                </p>
+                <div className="mt-10 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-8">
+                    <PrimaryCTA href="#offerte">Vraag een gratis offerte aan</PrimaryCTA>
+                    <a
+                        href="#realisaties"
+                        className="inline-flex items-center gap-1.5 border-b-2 border-white pb-1 text-md font-semibold text-white transition hover:border-[#C19848] hover:text-[#C19848]"
+                    >
+                        <span>Bekijk realisaties</span>
+                        <ArrowRight className="size-4" aria-hidden="true" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 );
 
-const RealisatiesSection = () => {
-    return (
-        <section
-            id="realisaties"
-            className="overflow-hidden bg-white py-16 md:py-24"
-            aria-labelledby="realisaties-titel"
-        >
-            <div className="mx-auto max-w-container px-4 md:px-8">
-                <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end lg:gap-12">
-                    <div className="flex max-w-3xl flex-col gap-4">
-                        <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Realisaties</p>
-                        <h2 id="realisaties-titel" className="text-display-sm font-medium text-balance text-black md:text-display-md">
-                            Elk project ontworpen op <strong className="font-extrabold">maat</strong> van de woning.
-                        </h2>
-                        <p className="text-lg text-black">
-                            Een greep uit onze recent gerealiseerde poolhouses — modern, klassiek of een combinatie van beide.
-                        </p>
-                    </div>
+// ─────────────────────────────────────────────────────────────────────────────
+// HET AANBOD — short intro to what Ostyn delivers. Sets the offer & 3D-ontwerp differentiator
+// before objections about price/trust kick in.
 
-                    <Button href="#offerte" size="xl" iconTrailing={ArrowRight} className="self-start lg:self-end">
-                        Vraag uw gratis offerte aan
-                    </Button>
-                </div>
-
-                <Carousel.Root className="mt-12 md:mt-16" opts={{ align: "start" }}>
-                    <Carousel.Content overflowHidden={false} className="gap-6 pr-4 md:gap-8 md:pr-8">
-                        {projects.map((project) => (
-                            <Carousel.Item
-                                key={project.id}
-                                className="group relative flex h-118 max-w-76 shrink-0 cursor-grab items-end overflow-hidden rounded-2xl bg-[#F2F2F2] md:h-126 md:w-full md:max-w-sm"
+const Aanbod = () => (
+    <Section id="aanbod" bg="white" aria-labelledby="aanbod-titel">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-20 lg:items-center">
+            <div>
+                <Eyebrow>Wat is een Ostyn poolhouse</Eyebrow>
+                <h2
+                    id="aanbod-titel"
+                    className="mt-5 text-3xl leading-tight font-medium text-balance text-black md:text-5xl md:leading-[1.1]"
+                >
+                    Een <strong className="font-extrabold">uniek</strong> ontwerp dat bij{" "}
+                    <strong className="font-extrabold">uw woning</strong> past.
+                </h2>
+                <p className="mt-6 text-lg text-black/80 md:text-xl">
+                    Geen standaardmodellen. Geen onderaannemers. Wij ontwerpen, produceren en plaatsen uw poolhouse{" "}
+                    <strong className="font-semibold">volledig in eigen huis</strong>. U krijgt vooraf een gedetailleerd{" "}
+                    <strong className="font-semibold">3D-beeld</strong> — zodat u exact ziet wat u krijgt, voordat de eerste
+                    plank wordt gezaagd.
+                </p>
+                <ul className="mt-8 space-y-3">
+                    {[
+                        "Architecturaal ontwerp, afgestemd op uw woning en tuin",
+                        "Eigen atelier in Dottenijs — productie volledig in eigen beheer",
+                        "Plaatsing door ons eigen team, geen onderaanneming",
+                        "Gratis 3D-ontwerp en vrijblijvende offerte",
+                    ].map((item) => (
+                        <li key={item} className="flex items-start gap-3">
+                            <span
+                                aria-hidden="true"
+                                className="mt-0.5 flex size-6 shrink-0 items-center justify-center bg-[#C19848]"
                             >
-                                <img
-                                    src={project.image}
-                                    alt={project.title}
-                                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-
-                                <div className="relative flex w-full flex-col gap-3 p-6 md:p-8">
-                                    <span className="self-start rounded-full bg-[#C19848] px-3 py-1 text-xs font-semibold text-white">
-                                        {project.tag}
-                                    </span>
-                                    <p className="text-display-xs font-semibold text-white md:text-display-sm">{project.title}</p>
-                                    <p className="text-md text-white/90">{project.subtitle}</p>
-                                </div>
-                            </Carousel.Item>
-                        ))}
-                    </Carousel.Content>
-
-                    <div className="mt-8 flex gap-4 md:gap-8">
-                        <Carousel.PrevTrigger asChild>
-                            <RoundButton icon={ArrowLeft} aria-label="Vorige realisatie" />
-                        </Carousel.PrevTrigger>
-                        <Carousel.NextTrigger asChild>
-                            <RoundButton icon={ArrowRight} aria-label="Volgende realisatie" />
-                        </Carousel.NextTrigger>
-                    </div>
-                </Carousel.Root>
-            </div>
-        </section>
-    );
-};
-
-type Pillar = { figure: string; eyebrow: string; title: string; body: ReactNode };
-const pillars: Pillar[] = [
-    {
-        figure: "1992",
-        eyebrow: "Sinds 1992",
-        title: "33 jaar familiebedrijf",
-        body: (
-            <>
-                <p>
-                    Ostyn is sinds <strong className="font-semibold">1992</strong> een familiebedrijf, opgericht door{" "}
-                    <strong className="font-semibold">Yvan Ostyn</strong> en vandaag voortgezet door zijn zonen{" "}
-                    <strong className="font-semibold">Thomas</strong> en <strong className="font-semibold">Laurens</strong>. Sinds 2023
-                    brengen we <strong className="font-semibold">Veranclassic</strong> en <strong className="font-semibold">Poolhouse Plaza</strong>{" "}
-                    samen onder één naam.
-                </p>
-                <p className="mt-3 text-sm italic text-black/70 md:text-md">
-                    &ldquo;Alles blijft hetzelfde, behalve de naam.&rdquo;
-                </p>
-            </>
-        ),
-    },
-    {
-        figure: "100%",
-        eyebrow: "Niets uitbesteed",
-        title: "Eigen atelier",
-        body: (
-            <p>
-                Elke poolhouse wordt door <strong className="font-semibold">onze eigen vaklui</strong> gebouwd in ons atelier in{" "}
-                <strong className="font-semibold">Dottenijs</strong>. Geen onderaanneming, geen tussenpartij. Eén keten van
-                verantwoordelijkheid — van eerste schets tot laatste schroef.
-            </p>
-        ),
-    },
-    {
-        figure: "3.000 m²",
-        eyebrow: "Open 7/7",
-        title: "Grootste showroom in België",
-        body: (
-            <p>
-                De <strong className="font-semibold">grootste overdekte showroom</strong> voor tuinconstructies in België en
-                Noord-Frankrijk. <strong className="font-semibold">Zeven dagen op zeven</strong> open — ook tijdens weekends en
-                feestdagen. Materialen bekijkt u op ware grootte, naast elkaar.
-            </p>
-        ),
-    },
-];
-
-const WaaromSection = () => {
-    return (
-        <section id="waarom" className="bg-[#F2F2F2] py-16 md:py-24" aria-labelledby="waarom-titel">
-            <div className="mx-auto max-w-container px-4 md:px-8">
-                <div className="flex max-w-3xl flex-col gap-4 md:gap-5">
-                    <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Waarom Ostyn</p>
-                    <h2 id="waarom-titel" className="text-display-sm font-medium text-balance text-black md:text-display-md">
-                        Drie redenen waarom <strong className="font-extrabold">pooleigenaars</strong> voor ons kiezen.
-                    </h2>
-                </div>
-
-                <ul className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-3 md:gap-8">
-                    {pillars.map((p) => (
-                        <li
-                            key={p.title}
-                            className="flex flex-col rounded-2xl bg-white p-8 md:p-10"
-                        >
-                            <p className="text-display-md font-extrabold tracking-tight text-black md:text-display-lg">
-                                {p.figure}
-                            </p>
-                            <div className="mt-8 border-t border-black/10 pt-6">
-                                <p className="text-xs font-semibold tracking-wider text-black uppercase">{p.eyebrow}</p>
-                                <h3 className="mt-2 text-xl font-semibold text-black md:text-display-xs">{p.title}</h3>
-                            </div>
-                            <div className="mt-4 text-md text-black/70">{p.body}</div>
+                                <Check className="size-4 text-white" />
+                            </span>
+                            <span className="text-md text-black md:text-lg">{item}</span>
                         </li>
                     ))}
                 </ul>
+                <div className="mt-10">
+                    <SecondaryCTA href="#offerte">Plan uw adviesgesprek</SecondaryCTA>
+                </div>
             </div>
-        </section>
-    );
-};
+            <div className="relative">
+                <img
+                    src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=1400&q=85&auto=format&fit=crop"
+                    alt="Detail van een Ostyn poolhouse in hardhout met grote schuifpartijen, uitkijk op zwembad en tuin"
+                    className="aspect-[4/5] w-full object-cover"
+                />
+            </div>
+        </div>
+    </Section>
+);
 
-type Step = { num: string; title: string; body: string };
-const steps: Step[] = [
+// ─────────────────────────────────────────────────────────────────────────────
+// MATERIALEN — four bekledingen.
+
+type Material = { name: string; description: string; image: string; alt: string };
+const materials: Material[] = [
     {
-        num: "01",
-        title: "Adviesgesprek",
-        body: "In onze showroom in Dottenijs of bij u thuis. We luisteren, kijken naar uw woning en geven concreet advies — zonder verkoopdruk.",
+        name: "Hout",
+        description: "Afrormosia of vergrijzende essences. Warme uitstraling, veroudert mooi.",
+        image: "https://images.unsplash.com/photo-1505873242700-f289a29e1e0f?w=1000&q=85&auto=format&fit=crop",
+        alt: "Poolhouse afgewerkt in warm hardhout, gefotografeerd in tuincontext",
     },
     {
-        num: "02",
-        title: "3D-ontwerp en offerte op maat",
-        body: "U ziet uw poolhouse in 3D vóór u tekent. De offerte is gedetailleerd en transparant. Wat we afspreken, blijft staan — geen meerwerk dat halverwege opduikt.",
+        name: "Trespa",
+        description: "Onderhoudsarme HPL-panelen in talloze tinten en houtlooks. Strak en hedendaags.",
+        image: "https://images.unsplash.com/photo-1564540583246-934409427776?w=1000&q=85&auto=format&fit=crop",
+        alt: "Hedendaagse poolhouse-gevel in Trespa-panelen met houtlook",
     },
     {
-        num: "03",
-        title: "Productie in eigen atelier",
-        body: "Uw poolhouse wordt door onze vaklui in Dottenijs gebouwd. Geen onderaanneming betekent: geen verborgen kosten en geen verschuiven van verantwoordelijkheid.",
+        name: "Crepi",
+        description: "Geïsoleerde gevel met gepleisterde afwerking. Tijdloos en architecturaal.",
+        image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1000&q=85&auto=format&fit=crop",
+        alt: "Poolhouse met witte crepi-afwerking, modern architecturaal silhouet",
     },
     {
-        num: "04",
-        title: "Plaatsing door Ostyn-teams",
-        body: "Onze eigen monteurs leveren en plaatsen. Eén ploeg op uw terrein, één aanspreekpunt voor de planning.",
-    },
-    {
-        num: "05",
-        title: "Klantenportaal en oplevering",
-        body: "U volgt uw project online via het Ostyn-klantenportaal. Bij oplevering overlopen we elk detail samen.",
+        name: "Aquapanel",
+        description: "Vochtbestendige cementgebonden platen, basis voor crepi of natuurlijke bekleding.",
+        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&q=85&auto=format&fit=crop",
+        alt: "Gevelopbouw met Aquapanel als ondergrond, klaar voor afwerking",
     },
 ];
 
-const ProcesSection = () => {
-    return (
-        <section id="proces" className="bg-white py-16 md:py-24" aria-labelledby="proces-titel">
-            <div className="mx-auto max-w-container px-4 md:px-8">
-                <div className="flex max-w-3xl flex-col gap-4 md:gap-5">
-                    <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Hoe werkt het</p>
-                    <h2 id="proces-titel" className="text-display-sm font-medium text-balance text-black md:text-display-md">
-                        Van eerste gesprek tot oplevering — <strong className="font-extrabold">zonder verrassingen</strong>.
-                    </h2>
-                    <p className="text-lg text-black">
-                        U weet vooraf hoe uw poolhouse eruit ziet, wat het kost, en wanneer het klaar is. De afgesproken prijs houdt
-                        stand.
-                    </p>
-                </div>
+const Materialen = () => (
+    <Section id="materialen" bg="gray" aria-labelledby="materialen-titel">
+        <div className="max-w-3xl">
+            <Eyebrow>Materialen en bekleding</Eyebrow>
+            <h2
+                id="materialen-titel"
+                className="mt-5 text-3xl leading-tight font-medium text-balance text-black md:text-5xl md:leading-[1.1]"
+            >
+                Vier bekledingen. <strong className="font-extrabold">Eén</strong> kwaliteitseis.
+            </h2>
+            <p className="mt-6 text-lg text-black/80 md:text-xl">
+                U kiest de uitstraling die bij uw woning past. Wij garanderen dat de afwerking onze normen haalt — of we
+                plaatsen niet.
+            </p>
+        </div>
 
-                <ol className="mt-12 grid grid-cols-1 gap-8 md:mt-16 lg:grid-cols-5 lg:gap-6">
-                    {steps.map((step, index) => (
-                        <li key={step.num} className="relative flex flex-col gap-4">
-                            <div className="flex items-center gap-4 lg:flex-col lg:items-start">
-                                <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#C19848] text-md font-semibold text-white md:size-14 md:text-lg">
-                                    {step.num}
-                                </span>
-                                {index < steps.length - 1 && (
-                                    <span aria-hidden="true" className="hidden h-px flex-1 bg-black/15 lg:block" />
-                                )}
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-semibold text-black md:text-display-xs">{step.title}</h3>
-                                <p className="mt-2 text-md text-black">{step.body}</p>
-                            </div>
-                        </li>
-                    ))}
-                </ol>
-
-                <div className="mt-12 flex flex-col gap-4 rounded-2xl bg-[#F2F2F2] p-6 md:flex-row md:items-center md:justify-between md:p-8">
-                    <div className="flex items-start gap-4">
-                        <Clock className="mt-0.5 size-6 shrink-0 text-[#C19848]" />
-                        <p className="text-md text-black">
-                            <strong className="font-semibold">Typische doorlooptijd: 3 tot 6 maanden</strong> van getekende offerte tot
-                            oplevering. We bevestigen de planning bij de offerte; per project kan dit licht variëren.
-                        </p>
+        <ul className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+            {materials.map((m) => (
+                <li key={m.name} className="flex flex-col bg-white">
+                    <img src={m.image} alt={m.alt} className="aspect-[4/5] w-full object-cover" />
+                    <div className="flex flex-1 flex-col p-6 md:p-7">
+                        <h3 className="text-xl font-semibold text-black">{m.name}</h3>
+                        <p className="mt-3 text-md text-black/70">{m.description}</p>
                     </div>
-                    <Button href="#offerte" size="lg" iconTrailing={ArrowRight} className="shrink-0">
-                        Vraag uw offerte aan
-                    </Button>
-                </div>
-            </div>
-        </section>
-    );
-};
+                </li>
+            ))}
+        </ul>
+    </Section>
+);
 
-type Testimonial = { id: string; quote: string; author: string; project: string; avatar: string };
-const testimonialColumns: Testimonial[][] = [
-    [
-        {
-            id: "t-devos",
-            quote: "Een dikke pluim aan al uw medewerkers! Naar aanleiding van de aankoop van een poolhouse bij uw bedrijf, zouden wij toch een dikke pluim willen geven aan al uw medewerkers!",
-            author: "Familie Devos",
-            project: "Poolhouse · 2024",
-            avatar: "https://www.untitledui.com/images/avatars/nikolas-gibbons?fm=webp&q=80",
-        },
-        {
-            id: "t-vandeputte",
-            quote: "De Afrormosia hardhout veroudert prachtig. Onze tuin oogt nu als een vakantieresort, en de buren komen het regelmatig bewonderen.",
-            author: "Familie Vandeputte",
-            project: "Poolhouse · 2023",
-            avatar: "https://www.untitledui.com/images/avatars/owen-garcia?fm=webp&q=80",
-        },
-        {
-            id: "t-janssens",
-            quote: "Drie maanden van schets tot oplevering. Indrukwekkend hoe strak de planning werd nageleefd.",
-            author: "Mr. Janssens",
-            project: "Veranda · 2024",
-            avatar: "https://www.untitledui.com/images/avatars/stefan-sears?fm=webp&q=80",
-        },
-    ],
-    [
-        {
-            id: "t-palsterman",
-            quote: "Ik heb zelden zulke bekwame, gedreven en vriendelijke vaklui aan het werk gezien!",
-            author: "Mr. Palsterman",
-            project: "Garage · 2023",
-            avatar: "https://www.untitledui.com/images/avatars/marco-kelly?fm=webp&q=80",
-        },
-        {
-            id: "t-vermeulen",
-            quote: "Het 3D-ontwerp gaf ons echt vertrouwen om de stap te zetten. Het resultaat ziet er nog mooier uit dan op de tekening.",
-            author: "Familie Vermeulen",
-            project: "Poolhouse · 2024",
-            avatar: "https://www.untitledui.com/images/avatars/ammar-foley?fm=webp&q=80",
-        },
-        {
-            id: "t-cornelis",
-            quote: "We dachten dat een poolhouse op maat onbetaalbaar zou zijn. Bij Ostyn klopte de offerte tot op de euro — geen verrassingen achteraf.",
-            author: "Familie Cornelis",
-            project: "Poolhouse · 2023",
-            avatar: "https://www.untitledui.com/images/avatars/mathilde-lewis?fm=webp&q=80",
-        },
-    ],
-    [
-        {
-            id: "t-lechantre",
-            quote: "We hadden gelijk om jullie bedrijf te vertrouwen.",
-            author: "Mr. & Mevr. Lechantre",
-            project: "Carport · 2023",
-            avatar: "https://www.untitledui.com/images/avatars/zaid-schwartz?fm=webp&q=80",
-        },
-        {
-            id: "t-debacker",
-            quote: "Eén aanspreekpunt van begin tot eind. Geen enkele keer moest ik bellen voor een update — zij belden mij.",
-            author: "Mevr. De Backer",
-            project: "Pergola · 2024",
-            avatar: "https://www.untitledui.com/images/avatars/florence-shaw?fm=webp&q=80",
-        },
-        {
-            id: "t-verhoeven",
-            quote: "Het SAV-team belde uit zichzelf na een half jaar om alles na te kijken. Dat zegt veel over hoe ze nazorg invullen.",
-            author: "Mevr. Verhoeven",
-            project: "Poolhouse · 2022",
-            avatar: "https://www.untitledui.com/images/avatars/harriet-rojas?fm=webp&q=80",
-        },
-    ],
+// ─────────────────────────────────────────────────────────────────────────────
+// WAAROM OSTYN — direct antwoord op de "kan ik jullie vertrouwen?" objectie.
+
+type Reason = { number: string; title: string; body: string };
+const reasons: Reason[] = [
+    {
+        number: "01",
+        title: "Volledig maatwerk",
+        body: "Elk project is uniek. Wij ontwerpen rond uw woning, uw tuin en uw manier van leven — geen standaardmodellen.",
+    },
+    {
+        number: "02",
+        title: "Eigen atelier, eigen plaatsingsteam",
+        body: "Geen onderaannemers. Onze vakmensen produceren in ons atelier in Dottenijs en plaatsen zelf op uw terrein.",
+    },
+    {
+        number: "03",
+        title: "30+ jaar ervaring",
+        body: "Familiebedrijf sinds 1992. Duizenden gerealiseerde projecten in België en Noord-Frankrijk.",
+    },
+    {
+        number: "04",
+        title: "Gratis 3D-ontwerp",
+        body: "Met onze eigen ontwerpsoftware ziet u uw poolhouse vooraf in detail — vóór u beslist, en vóór de productie start.",
+    },
+    {
+        number: "05",
+        title: "3.000 m² showroom",
+        body: "De grootste overdekte showroom van België in Dottenijs, 7 dagen op 7 open. Voel materialen, vergelijk afwerkingen.",
+    },
 ];
 
-const TestimonialsSection = () => {
-    return (
-        <section className="bg-[#F2F2F2] py-16 md:py-24" aria-labelledby="getuigenissen-titel">
-            <div className="mx-auto flex max-w-container flex-col items-center gap-12 px-4 md:gap-16 md:px-8">
-                <div className="flex max-w-3xl flex-col items-center gap-4 text-center md:gap-5">
-                    <div className="flex gap-1">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <Star01 key={i} className="size-5 fill-[#C19848] text-[#C19848]" />
-                        ))}
-                    </div>
-                    <h2
-                        id="getuigenissen-titel"
-                        className="text-display-sm font-medium text-balance text-black md:text-display-md"
-                    >
-                        Wat onze klanten zeggen.
-                    </h2>
-                </div>
+const Waarom = () => (
+    <Section id="waarom" bg="white" aria-labelledby="waarom-titel">
+        <div className="max-w-3xl">
+            <Eyebrow>Waarom Ostyn</Eyebrow>
+            <h2
+                id="waarom-titel"
+                className="mt-5 text-3xl leading-tight font-medium text-balance text-black md:text-5xl md:leading-[1.1]"
+            >
+                Vijf redenen om voor <strong className="font-extrabold">Ostyn</strong> te kiezen.
+            </h2>
+            <p className="mt-6 text-lg text-black/80 md:text-xl">
+                U investeert in uw thuis. Bij Ostyn investeren we evenveel in de relatie — voor, tijdens en lang na de
+                oplevering.
+            </p>
+        </div>
 
-                <div className="grid w-full grid-cols-1 gap-5 mask-b-from-[calc(100%-340px)] md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-                    {testimonialColumns.map((column, colIndex) => (
-                        <div
-                            key={colIndex}
-                            className={cx(
-                                "flex flex-col gap-5 lg:gap-8",
-                                colIndex === 0 && "lg:py-8",
-                                colIndex === 2 && "lg:pt-10",
-                            )}
-                        >
-                            {column.map((t) => (
-                                <figure
-                                    key={t.id}
-                                    className="flex flex-col gap-6 rounded-2xl bg-white p-6 shadow-xs lg:gap-8 lg:p-8"
-                                >
-                                    <div className="flex gap-1">
-                                        {Array.from({ length: 5 }).map((_, i) => (
-                                            <Star01 key={i} className="size-4 fill-[#C19848] text-[#C19848]" />
-                                        ))}
-                                    </div>
-                                    <blockquote className="text-md text-black">{t.quote}</blockquote>
-                                    <figcaption className="mt-auto flex items-center gap-3">
-                                        <img
-                                            src={t.avatar}
-                                            alt=""
-                                            aria-hidden="true"
-                                            className="size-10 shrink-0 rounded-full object-cover"
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-semibold text-black">{t.author}</span>
-                                            <span className="text-sm text-black/70">{t.project}</span>
-                                        </div>
-                                    </figcaption>
-                                </figure>
-                            ))}
+        <ul className="mt-14 grid grid-cols-1 gap-px bg-black/10 md:grid-cols-2 lg:grid-cols-3">
+            {reasons.map((r) => (
+                <li key={r.number} className="flex flex-col bg-white p-8 md:p-10">
+                    <span className="text-md font-semibold text-[#C19848]">{r.number}</span>
+                    <h3 className="mt-6 text-xl font-semibold text-black md:text-2xl">{r.title}</h3>
+                    <p className="mt-4 text-md text-black/70 md:text-lg">{r.body}</p>
+                </li>
+            ))}
+        </ul>
+
+        <div className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-4 border-t border-black/10 pt-10">
+            <p className="text-sm font-semibold tracking-wider text-black/60 uppercase">
+                Sinds 1992 vertrouwd door
+            </p>
+            <p className="text-md text-black">
+                <strong className="font-semibold">Duizenden gezinnen</strong> in België en Noord-Frankrijk
+            </p>
+            <p className="text-md text-black">
+                <strong className="font-semibold">Eigen klantenportaal</strong> — uw project live op te volgen
+            </p>
+        </div>
+    </Section>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// REALISATIES — photo grid. Visuele bewijslast.
+
+type Project = { title: string; location: string; image: string; alt: string; size?: "tall" | "wide" | "default" };
+const projects: Project[] = [
+    {
+        title: "Modern in Afrormosia",
+        location: "Kortrijk",
+        image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1400&q=85&auto=format&fit=crop",
+        alt: "Moderne poolhouse in Afrormosia hardhout met overdekt terras en zwembad",
+        size: "tall",
+    },
+    {
+        title: "Tijdloos in crepi",
+        location: "Gent",
+        image: "https://images.unsplash.com/photo-1505873242700-f289a29e1e0f?w=1200&q=85&auto=format&fit=crop",
+        alt: "Klassieke poolhouse met crepi-afwerking, gefotografeerd in zonnige tuin",
+    },
+    {
+        title: "Open architectuur",
+        location: "Brugge",
+        image: "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=1200&q=85&auto=format&fit=crop",
+        alt: "Open poolhouse met buitenkeuken, lounge en uitkijk op zwembad",
+    },
+    {
+        title: "Strak en compact",
+        location: "Antwerpen",
+        image: "https://images.unsplash.com/photo-1564540583246-934409427776?w=1400&q=85&auto=format&fit=crop",
+        alt: "Compacte hedendaagse poolhouse in donkere bekleding naast lap pool",
+        size: "wide",
+    },
+    {
+        title: "Hout en pleisterwerk",
+        location: "Roeselare",
+        image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=85&auto=format&fit=crop",
+        alt: "Poolhouse die hardhout combineert met witte pleisterwerk-gevel",
+    },
+    {
+        title: "Familieproject",
+        location: "Lille",
+        image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=85&auto=format&fit=crop",
+        alt: "Ruime poolhouse met overdekte loungezone, fotomoment einde namiddag",
+    },
+];
+
+const Realisaties = () => (
+    <Section id="realisaties" bg="gray" aria-labelledby="realisaties-titel">
+        <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+            <div className="max-w-2xl">
+                <Eyebrow>Realisaties</Eyebrow>
+                <h2
+                    id="realisaties-titel"
+                    className="mt-5 text-3xl leading-tight font-medium text-balance text-black md:text-5xl md:leading-[1.1]"
+                >
+                    Projecten die voor zichzelf <strong className="font-extrabold">spreken</strong>.
+                </h2>
+            </div>
+            <p className="max-w-md text-md text-black/70 md:text-lg">
+                Een greep uit onze recente poolhouses in België en Noord-Frankrijk. Elk uniek, elk volledig in eigen
+                beheer gebouwd.
+            </p>
+        </div>
+
+        <ul className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            {projects.map((p) => (
+                <li
+                    key={p.title}
+                    className={cx(
+                        "group relative overflow-hidden bg-black",
+                        p.size === "tall" && "lg:row-span-2",
+                        p.size === "wide" && "sm:col-span-2",
+                    )}
+                >
+                    <img
+                        src={p.image}
+                        alt={p.alt}
+                        className={cx(
+                            "w-full object-cover transition duration-700 group-hover:scale-105",
+                            p.size === "tall" ? "aspect-[3/5] lg:h-full" : "aspect-[4/3]",
+                        )}
+                    />
+                    <div
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-white/80 uppercase">{p.location}</p>
+                            <h3 className="mt-1.5 text-xl font-semibold text-white">{p.title}</h3>
                         </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-};
-
-type AftercareItem = { title: string; body: string };
-const aftercareItems: AftercareItem[] = [
-    {
-        title: "Eigen SAV-team",
-        body: "Service na verkoop intern georganiseerd. Geen externe hotline, geen ticketsysteem.",
-    },
-    {
-        title: "Open garantie",
-        body: "Onderhouds- en garantievoorwaarden op voorhand beschikbaar — niet in de kleine letters.",
-    },
-    {
-        title: "Klantenportaal",
-        body: "Blijft toegankelijk, ook jaren na de oplevering — voor planning, documenten en onderhoud.",
-    },
-    {
-        title: "Familiebedrijf sinds 1992",
-        body: "De namen op de offerte zijn de namen die u nadien terugvindt.",
-    },
-];
-
-const NazorgSection = () => {
-    return (
-        <section className="bg-white py-16 md:py-24" aria-labelledby="nazorg-titel">
-            <div className="mx-auto max-w-container px-4 md:px-8">
-                <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
-                    <div className="flex max-w-2xl flex-col gap-4 md:gap-5">
-                        <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Nazorg</p>
-                        <h2
-                            id="nazorg-titel"
-                            className="text-display-sm font-medium text-balance text-black md:text-display-md"
-                        >
-                            Ons werk stopt <strong className="font-extrabold">niet</strong> bij de oplevering.
-                        </h2>
-                        <p className="text-lg text-black">
-                            Een poolhouse is een investering voor decennia. U mag verwachten dat de partner die hem bouwt, er ook
-                            over tien jaar nog is.
-                        </p>
-                        <p className="mt-2 text-md text-black/70">
-                            Eerlijk gezegd: premium materialen zoals Afrormosia hardhout en Trespa zijn duurzaam, maar vragen
-                            onderhoud. We zijn daar open over en bezorgen u onze onderhoudsgids bij de oplevering.
-                        </p>
-                    </div>
-
-                    <ul className="flex flex-col border-t border-black/10">
-                        {aftercareItems.map((item) => (
-                            <li key={item.title} className="border-b border-black/10 py-6">
-                                <p className="text-lg font-semibold text-black md:text-xl">{item.title}</p>
-                                <p className="mt-2 text-md text-black/70">{item.body}</p>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
-        </section>
-    );
-};
-
-const ShowroomSection = () => {
-    return (
-        <section id="showroom" className="bg-[#C19848] py-16 md:py-24" aria-labelledby="showroom-titel">
-            <div className="mx-auto grid max-w-container grid-cols-1 gap-12 px-4 md:px-8 lg:grid-cols-2 lg:items-center lg:gap-16">
-                <div className="flex flex-col">
-                    <p className="text-sm font-semibold tracking-wider text-white uppercase md:text-md">Showroom</p>
-                    <h2 id="showroom-titel" className="mt-3 text-display-sm font-medium text-balance text-white md:text-display-md">
-                        Kom langs in <strong className="font-extrabold">Dottenijs</strong>.
-                    </h2>
-                    <p className="mt-4 text-lg text-white md:mt-5">
-                        <strong className="font-semibold">3.000 m² overdekt</strong>, zeven dagen op zeven open. Poolhouses, veranda&apos;s,
-                        carports en tuinkamers op ware grootte. Materialen die u kunt voelen — Afrormosia, Trespa, Aquapanel.
-                    </p>
-                    <ul className="mt-8 flex flex-col gap-4 text-md text-white">
-                        <li className="flex items-start gap-3">
-                            <MarkerPin01 className="mt-0.5 size-5 shrink-0 text-white" />
-                            <span>Engelse Wandeling 2, 7711 Dottenijs (Mouscron)</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <Calendar className="mt-0.5 size-5 shrink-0 text-white" />
-                            <span>7 dagen op 7 open — ook tijdens weekends en feestdagen</span>
-                        </li>
-                    </ul>
-                    <div className="mt-10 flex flex-col-reverse gap-3 sm:flex-row">
-                        <Button href="#inspiratieboek" color="secondary" size="xl" iconTrailing={ArrowUpRight}>
-                            Download het inspiratieboek
-                        </Button>
-                        <Button href="#offerte" size="xl" iconTrailing={ArrowRight} className="!bg-black !text-white hover:!bg-black/85">
-                            Vraag uw offerte aan
-                        </Button>
-                    </div>
-                </div>
-
-                <div className="relative">
-                    <div className="overflow-hidden rounded-2xl">
-                        <img
-                            src="/showroom.jpg"
-                            alt="Adviesgesprek in de Ostyn showroom in Dottenijs"
-                            className="aspect-square w-full object-cover"
+                        <ArrowUpRight
+                            className="size-6 shrink-0 text-white transition group-hover:text-[#C19848]"
+                            aria-hidden="true"
                         />
                     </div>
-                    <div className="absolute -right-4 -bottom-4 hidden flex-col gap-1 rounded-2xl bg-white px-6 py-4 shadow-2xl md:flex">
-                        <p className="text-display-xs font-semibold text-black">3.000 m²</p>
-                        <p className="text-sm font-medium text-black/70">overdekte showroom</p>
+                </li>
+            ))}
+        </ul>
+    </Section>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TESTIMONIALS — vertrouwen via klantverhalen. Quotes zijn plausibele placeholders
+// in Ostyn-tone; vervang door echte quotes van ostyn.be/getuigenissen/.
+
+type Testimonial = { quote: string; author: string; project: string };
+const testimonials: Testimonial[] = [
+    {
+        quote: "Van het eerste gesprek in de showroom tot de oplevering: één aanspreekpunt, één team. Het 3D-ontwerp gaf ons de zekerheid om te beslissen. Het resultaat is exact wat we hadden gehoopt.",
+        author: "Familie Devos",
+        project: "Poolhouse in Afrormosia",
+    },
+    {
+        quote: "Wij waren onder de indruk van hoe efficiënt de plaatsing verliep. De vakmannen van Ostyn werkten netjes, snel en met respect voor onze tuin. Eindresultaat: perfect afgewerkt.",
+        author: "Familie Soloch",
+        project: "Crepi-poolhouse met overdekt terras",
+    },
+    {
+        quote: "De combinatie van architecturaal ontwerp en bouwkundige expertise vind je nergens anders. Ostyn maakte van ons buitenproject één geheel met de woning.",
+        author: "Familie Lechantre",
+        project: "Maatwerk poolhouse, Noord-Frankrijk",
+    },
+];
+
+const Testimonials = () => (
+    <Section id="getuigenissen" bg="white" aria-labelledby="getuigenissen-titel">
+        <div className="max-w-3xl">
+            <Eyebrow>Klantgetuigenissen</Eyebrow>
+            <h2
+                id="getuigenissen-titel"
+                className="mt-5 text-3xl leading-tight font-medium text-balance text-black md:text-5xl md:leading-[1.1]"
+            >
+                <strong className="font-extrabold">Vertrouwd</strong> door gezinnen in België en Noord-Frankrijk.
+            </h2>
+        </div>
+
+        <ul className="mt-14 grid grid-cols-1 gap-px bg-black/10 md:grid-cols-3">
+            {testimonials.map((t) => (
+                <li key={t.author} className="flex flex-col bg-white p-8 md:p-10">
+                    <div aria-label="5 sterren" className="flex gap-0.5 text-[#C19848]">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                            <Star01 key={i} className="size-4 fill-current" aria-hidden="true" />
+                        ))}
                     </div>
-                </div>
-            </div>
-        </section>
-    );
-};
+                    <blockquote className="mt-6 flex-1 text-lg leading-relaxed text-black md:text-xl">
+                        <p>"{t.quote}"</p>
+                    </blockquote>
+                    <footer className="mt-8 border-t border-black/10 pt-5">
+                        <p className="text-md font-semibold text-black">{t.author}</p>
+                        <p className="mt-1 text-sm text-black/60">{t.project}</p>
+                    </footer>
+                </li>
+            ))}
+        </ul>
+    </Section>
+);
 
-const OfferteSection = () => {
-    return (
-        <section id="offerte" className="bg-[#F2F2F2] py-16 md:py-24" aria-labelledby="cta-titel">
-            <div className="mx-auto grid max-w-container grid-cols-1 gap-12 px-4 md:px-8 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
-                <div className="flex flex-col gap-4 lg:sticky lg:top-28 lg:self-start">
-                    <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Offerte aanvragen</p>
-                    <h2 id="cta-titel" className="text-display-sm font-medium text-balance text-black md:text-display-md">
-                        Klaar om uw poolhouse <strong className="font-extrabold">concreet</strong> te maken?
-                    </h2>
-                    <p className="text-lg text-black">
-                        Vraag uw <strong className="font-semibold">gratis offerte</strong> aan voor uw poolhouse. Vrijblijvend, zonder
-                        verkoopdruk, met antwoord binnen 2 werkdagen.
-                    </p>
+// ─────────────────────────────────────────────────────────────────────────────
+// HOE WERKT HET — proces, beantwoordt de "wat ga ik krijgen voor mijn geld?" objectie.
 
-                    <ul className="mt-4 flex flex-col gap-3 text-md text-black">
-                        <li className="flex items-start gap-3">
-                            <Check className="mt-0.5 size-5 shrink-0 text-[#C19848]" />
-                            <span>Vrijblijvend, geen verkoopdruk</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <Check className="mt-0.5 size-5 shrink-0 text-[#C19848]" />
-                            <span>Antwoord binnen 2 werkdagen</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <Check className="mt-0.5 size-5 shrink-0 text-[#C19848]" />
-                            <span>Gratis 3D-ontwerp bij ondertekening</span>
-                        </li>
-                    </ul>
+type Step = { number: string; title: string; body: string };
+const steps: Step[] = [
+    {
+        number: "01",
+        title: "Adviesgesprek",
+        body: "U brengt een bezoek aan onze showroom in Dottenijs. We luisteren naar uw wensen, bekijken uw situatie en geven eerlijk advies.",
+    },
+    {
+        number: "02",
+        title: "3D-ontwerp en offerte",
+        body: "Onze ontwerpers maken een gedetailleerd 3D-beeld van uw project, gekoppeld aan een vrijblijvende, transparante offerte.",
+    },
+    {
+        number: "03",
+        title: "Goedkeuring en productie",
+        body: "Na uw definitieve goedkeuring start de productie in ons eigen atelier — onder volledige kwaliteitscontrole.",
+    },
+    {
+        number: "04",
+        title: "Plaatsing op uw terrein",
+        body: "Ons eigen plaatsingsteam komt installeren. Strak gepland, met respect voor uw woning en tuin.",
+    },
+    {
+        number: "05",
+        title: "Nazorg",
+        body: "Na oplevering kunt u uw project en service-aanvragen opvolgen via uw eigen klantenportaal. Wij blijven uw aanspreekpunt.",
+    },
+];
 
-                    <div className="mt-6 flex flex-col gap-3 border-t border-black/10 pt-6 text-md text-black">
-                        <a href="tel:+3256480480" className="flex items-center gap-3 hover:opacity-80">
-                            <Phone className="size-5 text-[#C19848]" />
-                            <span className="font-semibold">+32 56 48 04 80</span>
-                        </a>
-                        <a href="mailto:info@ostyn.be" className="flex items-center gap-3 hover:opacity-80">
-                            <Mail01 className="size-5 text-[#C19848]" />
-                            <span className="font-semibold">info@ostyn.be</span>
-                        </a>
-                    </div>
-                </div>
-
-                <form
-                    action="#"
-                    method="post"
-                    className="flex flex-col gap-5 rounded-2xl bg-white p-6 md:p-8"
-                >
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                        <Input label="Voornaam" name="voornaam" placeholder="Voornaam" autoComplete="given-name" isRequired />
-                        <Input label="Naam" name="naam" placeholder="Naam" autoComplete="family-name" isRequired />
-                    </div>
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                        <Input label="E-mail" type="email" name="email" placeholder="u@voorbeeld.be" autoComplete="email" isRequired />
-                        <Input label="Telefoon" type="tel" name="telefoon" placeholder="+32 …" autoComplete="tel" />
-                    </div>
-                    <Input
-                        label="Postcode & gemeente"
-                        name="locatie"
-                        placeholder="bv. 8500 Kortrijk"
-                        autoComplete="postal-code"
-                    />
-                    <TextArea
-                        label="Vertel ons over uw project (optioneel)"
-                        name="bericht"
-                        placeholder="Bv. afmetingen pool, gewenste functies, timing…"
-                        rows={4}
-                    />
-                    <Checkbox
-                        name="privacy"
-                        isRequired
-                        label={
-                            <span className="text-sm text-black">
-                                Ik ga akkoord met de verwerking van mijn gegevens volgens de{" "}
-                                <a
-                                    href="https://ostyn.be/privacy"
-                                    target="_blank"
-                                    rel="noopener"
-                                    className="font-semibold text-black underline underline-offset-4"
-                                >
-                                    privacyverklaring
-                                </a>
-                                .
-                            </span>
-                        }
-                    />
-                    <Button type="submit" size="xl" iconTrailing={Send01} className="mt-2">
-                        Vraag uw gratis offerte aan
-                    </Button>
-                    <p className="text-center text-sm text-black/70">
-                        Vrijblijvend · Geen verkoopdruk · Antwoord binnen 2 werkdagen
-                    </p>
-                </form>
-            </div>
-
-            <p id="inspiratieboek" className="mx-auto mt-12 max-w-container px-4 text-center text-md text-black md:px-8">
-                Liever eerst wat inspiratie?{" "}
-                <a
-                    href="https://ostyn.be/inspiratieboek"
-                    target="_blank"
-                    rel="noopener"
-                    className="font-semibold text-black underline underline-offset-4"
-                >
-                    Download het inspiratieboek →
-                </a>
+const Proces = () => (
+    <Section id="proces" bg="gray" aria-labelledby="proces-titel">
+        <div className="max-w-3xl">
+            <Eyebrow>Hoe werkt het</Eyebrow>
+            <h2
+                id="proces-titel"
+                className="mt-5 text-3xl leading-tight font-medium text-balance text-black md:text-5xl md:leading-[1.1]"
+            >
+                Van eerste schets tot <strong className="font-extrabold">sleutel-op-de-deur</strong>.
+            </h2>
+            <p className="mt-6 text-lg text-black/80 md:text-xl">
+                Vijf stappen. Eén aanspreekpunt. Geen verrassingen.
             </p>
-        </section>
-    );
-};
+        </div>
 
-const footerCols = [
+        <ol className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5 lg:gap-0">
+            {steps.map((step, i) => (
+                <li
+                    key={step.number}
+                    className={cx(
+                        "flex flex-col bg-white p-7 md:p-8",
+                        i > 0 && "lg:border-l lg:border-black/10",
+                    )}
+                >
+                    <span className="text-md font-semibold text-[#C19848]">{step.number}</span>
+                    <h3 className="mt-5 text-lg font-semibold text-black md:text-xl">{step.title}</h3>
+                    <p className="mt-3 text-md text-black/70">{step.body}</p>
+                </li>
+            ))}
+        </ol>
+    </Section>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SHOWROOM — gold section. Anchors the "3000 m² showroom" proof and routes to the showroom CTA.
+
+const Showroom = () => (
+    <section id="showroom" aria-labelledby="showroom-titel" className="bg-[#C19848]">
+        <div className="mx-auto grid max-w-container grid-cols-1 lg:grid-cols-2">
+            <div className="flex flex-col justify-center px-5 py-20 md:px-12 md:py-24 lg:px-16">
+                <Eyebrow tone="white">Showroom in Dottenijs</Eyebrow>
+                <h2
+                    id="showroom-titel"
+                    className="mt-5 text-3xl leading-tight font-medium text-balance text-white md:text-5xl md:leading-[1.1]"
+                >
+                    <strong className="font-extrabold">3.000 m²</strong> overdekt, <strong className="font-extrabold">7</strong>{" "}
+                    dagen op 7 open.
+                </h2>
+                <p className="mt-6 text-lg text-white/90 md:text-xl">
+                    Voel de materialen. Vergelijk afwerkingen. Loop door volledig opgebouwde poolhouses in onze showroom —
+                    de grootste van België. Ons team neemt graag de tijd om uw project met u door te lopen.
+                </p>
+                <div className="mt-10 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-8">
+                    <a
+                        href="#offerte"
+                        className="inline-flex items-center justify-center gap-2 bg-white px-8 py-3.5 text-md font-semibold text-[#C19848] transition hover:bg-black hover:text-white"
+                    >
+                        <span>Plan uw bezoek</span>
+                        <ArrowRight className="size-4" aria-hidden="true" />
+                    </a>
+                    <a
+                        href="https://www.google.com/maps?q=Ostyn+Dottenijs"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 border-b-2 border-white pb-1 text-md font-semibold text-white transition hover:opacity-80"
+                    >
+                        <MarkerPin01 className="size-4" aria-hidden="true" />
+                        <span>Dottenijs, België</span>
+                    </a>
+                </div>
+            </div>
+            <img
+                src="/showroom.jpg"
+                alt="Adviesgesprek in de Ostyn-showroom in Dottenijs: 3.000 m² overdekt, met opgebouwde poolhouses en materialen om in het echt te bekijken"
+                className="aspect-[4/3] size-full object-cover lg:aspect-auto lg:h-full"
+            />
+        </div>
+    </section>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// OFFERTE — repeat CTA + contact card. Sluit de pagina af op het primaire conversiepunt.
+
+const Offerte = () => (
+    <Section id="offerte" bg="white" aria-labelledby="offerte-titel" className="py-20 md:py-28">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-16">
+            <div className="lg:col-span-3">
+                <Eyebrow>Vraag uw offerte</Eyebrow>
+                <h2
+                    id="offerte-titel"
+                    className="mt-5 text-3xl leading-tight font-medium text-balance text-black md:text-5xl md:leading-[1.1]"
+                >
+                    Klaar om uw <strong className="font-extrabold">dromen</strong> te realiseren?
+                </h2>
+                <p className="mt-6 text-lg text-black/80 md:text-xl">
+                    Vraag vrijblijvend uw offerte aan. U krijgt een persoonlijk adviesgesprek, een gedetailleerd 3D-ontwerp
+                    en een transparante prijsopgave — zonder verplichting.
+                </p>
+                <div className="mt-10 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-8">
+                    <PrimaryCTA href="https://ostyn.be/offerte-aanvragen/">
+                        Vraag een gratis offerte aan
+                    </PrimaryCTA>
+                    <SecondaryCTA href="#">Download ons inspiratieboek</SecondaryCTA>
+                </div>
+            </div>
+
+            <aside className="bg-[#F2F2F2] p-8 md:p-10 lg:col-span-2">
+                <p className="text-sm font-semibold tracking-wider text-black uppercase">Of contacteer ons rechtstreeks</p>
+                <ul className="mt-6 space-y-5">
+                    <li className="flex items-start gap-3">
+                        <Phone className="mt-0.5 size-5 shrink-0 text-[#C19848]" aria-hidden="true" />
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-black/60 uppercase">Telefoon</p>
+                            <a href="tel:+3256480060" className="text-md font-semibold text-black hover:text-[#C19848]">
+                                +32 56 48 00 60
+                            </a>
+                        </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                        <Mail01 className="mt-0.5 size-5 shrink-0 text-[#C19848]" aria-hidden="true" />
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-black/60 uppercase">E-mail</p>
+                            <a href="mailto:info@ostyn.be" className="text-md font-semibold text-black hover:text-[#C19848]">
+                                info@ostyn.be
+                            </a>
+                        </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                        <MarkerPin01 className="mt-0.5 size-5 shrink-0 text-[#C19848]" aria-hidden="true" />
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-black/60 uppercase">Showroom</p>
+                            <p className="text-md font-semibold text-black">Dottenijs, België</p>
+                            <p className="mt-1 text-sm text-black/70">7 dagen op 7 open, op afspraak</p>
+                        </div>
+                    </li>
+                </ul>
+                <p className="mt-8 border-t border-black/10 pt-6 text-sm text-black/70">
+                    <strong className="font-semibold text-black">Familiebedrijf sinds 1992.</strong> Wij planten met Go
+                    Forest een boom per gerealiseerd project.
+                </p>
+            </aside>
+        </div>
+    </Section>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FOOTER
+
+const footerCols: { heading: string; links: { label: string; href: string }[] }[] = [
     {
-        label: "Showroom",
-        items: [
-            { label: "Engelse Wandeling 2", href: null },
-            { label: "7711 Dottenijs (Mouscron)", href: null },
-            { label: "7 dagen op 7 open", href: null },
+        heading: "Productgamma",
+        links: [
+            { label: "Poolhouse", href: "#aanbod" },
+            { label: "Veranda", href: "#" },
+            { label: "Carport", href: "#" },
+            { label: "Tuinhuis", href: "#" },
+            { label: "Pergola", href: "#" },
         ],
     },
     {
-        label: "Contact",
-        items: [
-            { label: "+32 56 48 04 80", href: "tel:+3256480480" },
+        heading: "Ostyn",
+        links: [
+            { label: "Realisaties", href: "#realisaties" },
+            { label: "Showroom", href: "#showroom" },
+            { label: "Getuigenissen", href: "#getuigenissen" },
+            { label: "Over ons", href: "#waarom" },
+            { label: "Klantenportaal", href: "#" },
+        ],
+    },
+    {
+        heading: "Contact",
+        links: [
+            { label: "Offerte aanvragen", href: "#offerte" },
+            { label: "+32 56 48 00 60", href: "tel:+3256480060" },
             { label: "info@ostyn.be", href: "mailto:info@ostyn.be" },
-        ],
-    },
-    {
-        label: "Juridisch",
-        items: [
-            { label: "Privacybeleid", href: "https://ostyn.be/privacy" },
-            { label: "Cookiebeleid", href: "https://ostyn.be/cookies" },
-            { label: "Algemene voorwaarden", href: "https://ostyn.be/algemene-voorwaarden" },
+            { label: "Dottenijs, België", href: "https://www.google.com/maps?q=Ostyn+Dottenijs" },
         ],
     },
 ];
 
-const OstynFooter = () => {
-    return (
-        <footer className="bg-white py-12 md:pt-16 md:pb-12">
-            <div className="mx-auto max-w-container px-4 md:px-8">
-                <div className="grid grid-cols-1 gap-12 border-t border-black/10 pt-12 md:grid-cols-2 lg:grid-cols-4">
-                    <div className="flex flex-col gap-4">
-                        <img src="/logo-ostyn.png" alt="Ostyn" className="h-10 w-auto" />
-                        <p className="max-w-xs text-md text-black">
-                            Specialist in tuinconstructies, woonuitbreidingen en poolhouses. Sinds 1992.
-                        </p>
-                    </div>
-                    {footerCols.map((col) => (
-                        <div key={col.label} className="flex flex-col gap-4">
-                            <h4 className="text-sm font-semibold tracking-wider text-black uppercase">{col.label}</h4>
-                            <ul className="flex flex-col gap-2">
-                                {col.items.map((item) => (
-                                    <li key={item.label} className="text-md text-black">
-                                        {item.href ? (
-                                            <a
-                                                href={item.href}
-                                                target={item.href.startsWith("http") ? "_blank" : undefined}
-                                                rel={item.href.startsWith("http") ? "noopener" : undefined}
-                                                className="hover:opacity-70"
-                                            >
-                                                {item.label}
-                                            </a>
-                                        ) : (
-                                            item.label
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-                </div>
-
-                <div className="mt-12 flex flex-col justify-between gap-4 border-t border-black/10 pt-8 md:flex-row md:items-center">
-                    <p className="text-sm text-black/70">
-                        © {new Date().getFullYear()} Ostyn — voorheen Veranclassic &amp; Poolhouse Plaza.
+const Footer = () => (
+    <footer className="border-t border-black/10 bg-white">
+        <div className="mx-auto max-w-container px-5 py-16 md:px-8 md:py-20">
+            <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-16">
+                <div>
+                    <OstynLogo />
+                    <p className="mt-6 max-w-xs text-md text-black/70">
+                        Premium poolhouses op maat. Ontworpen, geproduceerd en geplaatst door één familiebedrijf — sinds
+                        1992.
                     </p>
-                    <div className="flex gap-4 text-sm text-black/70">
-                        <a href="#realisaties" className="hover:text-black">
-                            Realisaties
-                        </a>
-                        <a href="#waarom" className="hover:text-black">
-                            Waarom Ostyn
-                        </a>
-                        <a href="#proces" className="hover:text-black">
-                            Proces
-                        </a>
-                        <a href="#showroom" className="hover:text-black">
-                            Showroom
-                        </a>
-                    </div>
+                    <p className="mt-4 text-sm font-semibold tracking-wider text-[#C19848] uppercase">
+                        Expand your freedom
+                    </p>
                 </div>
+                {footerCols.map((col) => (
+                    <div key={col.heading}>
+                        <p className="text-sm font-semibold tracking-wider text-black uppercase">{col.heading}</p>
+                        <ul className="mt-5 space-y-3">
+                            {col.links.map((link) => (
+                                <li key={link.label}>
+                                    <a
+                                        href={link.href}
+                                        className="text-md text-black/70 transition hover:text-[#C19848]"
+                                    >
+                                        {link.label}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
             </div>
-        </footer>
-    );
-};
 
-const LandingPage17 = () => {
+            <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-black/10 pt-8 md:flex-row md:items-center">
+                <p className="text-sm text-black/60">
+                    © {new Date().getFullYear()} Ostyn. Alle rechten voorbehouden.
+                </p>
+                <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                    <li>
+                        <a href="#" className="text-sm text-black/60 transition hover:text-[#C19848]">
+                            Privacybeleid
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" className="text-sm text-black/60 transition hover:text-[#C19848]">
+                            Cookiebeleid
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" className="text-sm text-black/60 transition hover:text-[#C19848]">
+                            Algemene voorwaarden
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function LandingPage17() {
     return (
-        <div className="bg-white">
-            <OstynHeader />
-            <main id="hoofdinhoud">
-                <HeroSection />
-                <PromiseSection />
-                <SectionDivider />
-                <RealisatiesSection />
-                <SectionDivider />
-                <WaaromSection />
-                <ProcesSection />
-                <ShowroomSection />
-                <TestimonialsSection />
-                <NazorgSection />
-                <OfferteSection />
+        <div className="bg-white text-black">
+            <Header />
+            <main>
+                <Hero />
+                <Aanbod />
+                <Materialen />
+                <Waarom />
+                <Realisaties />
+                <Testimonials />
+                <Proces />
+                <Showroom />
+                <Offerte />
             </main>
-            <OstynFooter />
+            <Footer />
         </div>
     );
-};
-
-export default LandingPage17;
+}
