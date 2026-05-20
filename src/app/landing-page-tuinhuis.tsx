@@ -1,16 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, type FC, type ReactNode } from "react";
+import { useEffect, useRef, type FC, type ReactNode } from "react";
 import {
     ArrowLeft,
     ArrowRight,
     ArrowUpRight,
     Calendar,
     Check,
-    ChevronDown,
     Mail01,
     MarkerPin01,
-    Menu01,
     Phone,
     Plus,
     Send01,
@@ -20,108 +18,10 @@ import { Button } from "@/components/base/buttons/button";
 import { Checkbox } from "@/components/base/checkbox/checkbox";
 import { Input } from "@/components/base/input/input";
 import { TextArea } from "@/components/base/textarea/textarea";
+import { OstynFooter } from "@/components/marketing/ostyn-footer";
+import { OstynHeader } from "@/components/marketing/ostyn-header";
 import { SectionDivider } from "@/components/shared-assets/section-divider";
 import { cx } from "@/utils/cx";
-
-const productNav = [
-    { label: "tuinhuis", href: "/tuinhuis", active: true },
-    { label: "carport", href: "#" },
-    { label: "garage", href: "#" },
-    { label: "poolhouse", href: "/" },
-    { label: "veranda", href: "#" },
-    { label: "pergola", href: "#" },
-    { label: "realisaties", href: "#realisaties" },
-];
-
-const OstynLogo = ({ className }: { className?: string }) => (
-    <img
-        src="/logo-ostyn.png"
-        alt="Ostyn"
-        className={cx("h-11 w-auto transition-[height] duration-300 ease-out md:h-14", className)}
-    />
-);
-
-const OstynHeader = () => {
-    const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 80);
-        onScroll();
-        window.addEventListener("scroll", onScroll, { passive: true });
-        return () => window.removeEventListener("scroll", onScroll);
-    }, []);
-
-    return (
-        <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white">
-            <div className="mx-auto max-w-container px-4 md:px-8">
-                <div
-                    aria-hidden={scrolled || undefined}
-                    className={cx(
-                        "hidden overflow-hidden transition-[height,opacity] duration-300 ease-out md:flex md:items-center md:justify-end md:gap-5",
-                        scrolled ? "md:h-0 md:opacity-0" : "md:h-6 md:opacity-100",
-                    )}
-                >
-                    <a
-                        href="#"
-                        tabIndex={scrolled ? -1 : undefined}
-                        className="flex items-center gap-1.5 text-xs text-black/60 outline-focus-ring transition hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2"
-                    >
-                        klantenportaal
-                        <ArrowUpRight className="size-3.5" aria-hidden="true" />
-                    </a>
-                    <button
-                        type="button"
-                        tabIndex={scrolled ? -1 : undefined}
-                        className="flex items-center gap-1 text-xs text-black/60 outline-focus-ring transition hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2"
-                    >
-                        nl
-                        <ChevronDown className="size-3.5" aria-hidden="true" />
-                    </button>
-                </div>
-                <div className="flex h-16 items-end justify-between gap-6 pb-3 md:h-14 md:pb-3">
-                    <a href="/" aria-label="Ostyn — startpagina" className="flex items-center">
-                        <OstynLogo className={scrolled ? "md:!h-9" : undefined} />
-                    </a>
-
-                    <nav aria-label="Hoofdnavigatie" className="hidden md:block">
-                        <ul className="flex items-center gap-6 lg:gap-8">
-                            {productNav.map((item) => (
-                                <li key={item.label}>
-                                    <a
-                                        href={item.href}
-                                        className={cx(
-                                            "text-md text-black outline-focus-ring transition hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2",
-                                            item.active && "font-bold",
-                                        )}
-                                        aria-current={item.active ? "page" : undefined}
-                                    >
-                                        {item.label}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </nav>
-
-                    <div className="flex items-center gap-5">
-                        <a
-                            href="#offerte"
-                            className="text-md text-[#C19848] outline-focus-ring transition hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 max-md:hidden"
-                        >
-                            afspraak maken
-                        </a>
-                        <button
-                            type="button"
-                            aria-label="Menu openen"
-                            className="flex items-center justify-center p-1 outline-focus-ring transition hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
-                        >
-                            <Menu01 className="size-6 text-black" aria-hidden="true" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>
-    );
-};
 
 const HeroSection = () => {
     const canvasRef = useRef<HTMLDivElement>(null);
@@ -165,7 +65,7 @@ const HeroSection = () => {
             >
                 <img
                     ref={imgRef}
-                    src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=2400&h=1600&fit=crop&q=80"
+                    src="/tuinhuis/hero.jpg"
                     alt=""
                     aria-hidden="true"
                     className="absolute inset-x-0 -top-[20%] -z-10 h-[140%] w-full object-cover will-change-transform"
@@ -1103,96 +1003,10 @@ const FaqSection = () => {
     );
 };
 
-const footerCols = [
-    {
-        label: "Showroom",
-        items: [
-            { label: "Engelse Wandeling 2", href: null },
-            { label: "7711 Dottenijs (Mouscron)", href: null },
-            { label: "7 dagen op 7 open", href: null },
-        ],
-    },
-    {
-        label: "Contact",
-        items: [
-            { label: "+32 56 48 04 80", href: "tel:+3256480480" },
-            { label: "info@ostyn.be", href: "mailto:info@ostyn.be" },
-        ],
-    },
-    {
-        label: "Juridisch",
-        items: [
-            { label: "Privacybeleid", href: "https://ostyn.be/privacy" },
-            { label: "Cookiebeleid", href: "https://ostyn.be/cookies" },
-            { label: "Algemene voorwaarden", href: "https://ostyn.be/algemene-voorwaarden" },
-        ],
-    },
-];
-
-const OstynFooter = () => {
-    return (
-        <footer className="bg-white py-12 md:pt-16 md:pb-12">
-            <div className="mx-auto max-w-container px-4 md:px-8">
-                <div className="grid grid-cols-1 gap-12 border-t border-black/10 pt-12 md:grid-cols-2 lg:grid-cols-4">
-                    <div className="flex flex-col gap-4">
-                        <img src="/logo-ostyn.png" alt="Ostyn" className="h-10 w-auto self-start" />
-                        <p className="max-w-xs text-md text-black">
-                            Specialist in tuinconstructies, woonuitbreidingen en poolhouses. Sinds 1992.
-                        </p>
-                    </div>
-                    {footerCols.map((col) => (
-                        <div key={col.label} className="flex flex-col gap-4">
-                            <h4 className="text-sm font-semibold tracking-wider text-black uppercase">{col.label}</h4>
-                            <ul className="flex flex-col gap-2">
-                                {col.items.map((item) => (
-                                    <li key={item.label} className="text-md text-black">
-                                        {item.href ? (
-                                            <a
-                                                href={item.href}
-                                                target={item.href.startsWith("http") ? "_blank" : undefined}
-                                                rel={item.href.startsWith("http") ? "noopener" : undefined}
-                                                className="hover:opacity-70"
-                                            >
-                                                {item.label}
-                                            </a>
-                                        ) : (
-                                            item.label
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-                </div>
-
-                <div className="mt-12 flex flex-col justify-between gap-4 border-t border-black/10 pt-8 md:flex-row md:items-center">
-                    <p className="text-sm text-black/70">
-                        © {new Date().getFullYear()} Ostyn — voorheen Veranclassic &amp; Poolhouse Plaza.
-                    </p>
-                    <div className="flex gap-4 text-sm text-black/70">
-                        <a href="#realisaties" className="hover:text-black">
-                            Realisaties
-                        </a>
-                        <a href="#waarom" className="hover:text-black">
-                            Waarom Ostyn
-                        </a>
-                        <a href="#proces" className="hover:text-black">
-                            Proces
-                        </a>
-                        <a href="#showroom" className="hover:text-black">
-                            Showroom
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    );
-};
-
 const LandingPageTuinhuis = () => {
     return (
         <div className="bg-white">
-            <OstynHeader />
+            <OstynHeader activeProduct="tuinhuis" />
             <main id="hoofdinhoud">
                 <HeroSection />
                 <PromiseSection />
