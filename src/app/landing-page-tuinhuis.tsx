@@ -24,10 +24,10 @@ import { SectionDivider } from "@/components/shared-assets/section-divider";
 import { cx } from "@/utils/cx";
 
 const productNav = [
-    { label: "tuinhuis", href: "/tuinhuis" },
+    { label: "tuinhuis", href: "/tuinhuis", active: true },
     { label: "carport", href: "#" },
     { label: "garage", href: "#" },
-    { label: "poolhouse", href: "/", active: true },
+    { label: "poolhouse", href: "/" },
     { label: "veranda", href: "#" },
     { label: "pergola", href: "#" },
     { label: "realisaties", href: "#realisaties" },
@@ -79,7 +79,7 @@ const OstynHeader = () => {
                     </button>
                 </div>
                 <div className="flex h-16 items-end justify-between gap-6 pb-3 md:h-14 md:pb-3">
-                    <a href="#" aria-label="Ostyn — startpagina" className="flex items-center">
+                    <a href="/" aria-label="Ostyn — startpagina" className="flex items-center">
                         <OstynLogo className={scrolled ? "md:!h-9" : undefined} />
                     </a>
 
@@ -165,7 +165,7 @@ const HeroSection = () => {
             >
                 <img
                     ref={imgRef}
-                    src="/hero.jpg"
+                    src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=2400&h=1600&fit=crop&q=80"
                     alt=""
                     aria-hidden="true"
                     className="absolute inset-x-0 -top-[20%] -z-10 h-[140%] w-full object-cover will-change-transform"
@@ -185,7 +185,7 @@ const HeroSection = () => {
                                 id="hero-titel"
                                 className="mt-3 text-display-sm font-medium text-balance text-white md:text-display-md"
                             >
-                                Een <strong className="font-extrabold">poolhouse op maat</strong>. In{" "}
+                                Een <strong className="font-extrabold">tuinhuis op maat</strong>. In{" "}
                                 <strong className="font-extrabold">eigen atelier</strong> gebouwd.
                             </h1>
                         </div>
@@ -197,13 +197,13 @@ const HeroSection = () => {
                                 className="group flex shrink-0 gap-2 outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-4"
                             >
                                 <img
-                                    src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400&h=400&fit=crop&q=80"
+                                    src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=400&h=400&fit=crop&q=80"
                                     alt=""
                                     aria-hidden="true"
                                     className="size-12 shrink-0 rounded-2xl object-cover ring-1 ring-white/15 transition group-hover:scale-[1.05]"
                                 />
                                 <img
-                                    src="https://images.unsplash.com/photo-1505873242700-f289a29e1e0f?w=400&h=400&fit=crop&q=80"
+                                    src="https://images.unsplash.com/photo-1564540583246-934409427776?w=400&h=400&fit=crop&q=80"
                                     alt=""
                                     aria-hidden="true"
                                     className="size-12 shrink-0 rounded-2xl object-cover ring-1 ring-white/15 transition group-hover:scale-[1.05]"
@@ -254,10 +254,10 @@ const PromiseSection = () => {
                         id="belofte-titel"
                         className="mt-3 text-display-sm font-medium text-balance text-black md:text-display-md"
                     >
-                        Een <strong className="font-extrabold">premium</strong> poolhouse, op <strong className="font-extrabold">maat</strong> van uw woning ontworpen en in <strong className="font-extrabold">eigen atelier</strong> gebouwd.
+                        Een <strong className="font-extrabold">premium</strong> tuinhuis, op <strong className="font-extrabold">maat</strong> van uw tuin ontworpen en in <strong className="font-extrabold">eigen atelier</strong> gebouwd.
                     </h2>
                     <p className="mt-4 text-lg text-black md:mt-5">
-                        Geen vijf aannemers op uw terrein. Geen ontwerper die naar een uitvoerder doorverwijst. Eén team, één
+                        Geen catalogusmodel uit een doos. Geen ontwerper die naar een uitvoerder doorverwijst. Eén team, één
                         prijsafspraak, één verantwoordelijke partner — ook jaren na de plaatsing.
                     </p>
                 </div>
@@ -287,31 +287,31 @@ type Project = {
 const projects: Project[] = [
     {
         id: "p1",
-        title: "Modern minimalistisch",
-        subtitle: "Afrormosia hardhout, schuifpartijen op volle hoogte, plat dak.",
-        image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=900&h=1200&fit=crop&q=80",
-        tag: "Hedendaags",
+        title: "Tuinatelier met daglicht",
+        subtitle: "Afrormosia hardhout, hoge schuifpartijen, plat dak met lichtkoepel.",
+        image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=900&h=1200&fit=crop&q=80",
+        tag: "Atelier",
     },
     {
         id: "p2",
         title: "Klassiek silhouet",
-        subtitle: "Trespa-panelen, zadeldak, geïntegreerde berging.",
+        subtitle: "Trespa-panelen, zadeldak, geïntegreerde berging voor tuinmateriaal.",
         image: "https://images.unsplash.com/photo-1505873242700-f289a29e1e0f?w=900&h=1200&fit=crop&q=80",
         tag: "Klassiek",
     },
     {
         id: "p3",
-        title: "Open architectuur",
-        subtitle: "Buitenkeuken, lounge en schaduwzone in één volume.",
+        title: "Open tuinkamer",
+        subtitle: "Overdekt terras met loungezone en geïntegreerde buitenkeuken.",
         image: "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=900&h=1200&fit=crop&q=80",
-        tag: "Open",
+        tag: "Tuinkamer",
     },
     {
         id: "p4",
-        title: "Strak en compact",
-        subtitle: "Aluminium accenten, vlakke gevel, geïntegreerd terras.",
+        title: "Compact stadstuinhuis",
+        subtitle: "Aluminium accenten, vlakke gevel, fiets- en tuingereiberging.",
         image: "https://images.unsplash.com/photo-1564540583246-934409427776?w=900&h=1200&fit=crop&q=80",
-        tag: "Strak",
+        tag: "Compact",
     },
     {
         id: "p5",
@@ -322,10 +322,10 @@ const projects: Project[] = [
     },
     {
         id: "p6",
-        title: "Schaduw en functie",
-        subtitle: "Overdekt terras, kleedruimte en buitendouche.",
+        title: "Tuinkantoor",
+        subtitle: "Volwaardig geïsoleerde werkruimte met aparte ingang en akoestiek.",
         image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900&h=1200&fit=crop&q=80",
-        tag: "Functioneel",
+        tag: "Werkruimte",
     },
 ];
 
@@ -362,10 +362,11 @@ const RealisatiesSection = () => {
                     <div className="flex max-w-3xl flex-col gap-4">
                         <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Realisaties</p>
                         <h2 id="realisaties-titel" className="text-display-sm font-medium text-balance text-black md:text-display-md">
-                            Elk project ontworpen op <strong className="font-extrabold">maat</strong> van de woning.
+                            Elk tuinhuis ontworpen op <strong className="font-extrabold">maat</strong> van de woning.
                         </h2>
                         <p className="text-lg text-black">
-                            Een greep uit onze recent gerealiseerde poolhouses — modern, klassiek of een combinatie van beide.
+                            Een greep uit onze recent gerealiseerde tuinhuizen — atelier, tuinkamer, berging, kantoor of een
+                            combinatie ervan.
                         </p>
                     </div>
 
@@ -440,7 +441,7 @@ const pillars: Pillar[] = [
         title: "Eigen atelier",
         body: (
             <p>
-                Elke poolhouse wordt door <strong className="font-semibold">onze eigen vaklui</strong> gebouwd in ons atelier in{" "}
+                Elk tuinhuis wordt door <strong className="font-semibold">onze eigen vaklui</strong> gebouwd in ons atelier in{" "}
                 <strong className="font-semibold">Dottenijs</strong>. Geen onderaanneming, geen tussenpartij. Eén keten van
                 verantwoordelijkheid — van eerste schets tot laatste schroef.
             </p>
@@ -467,7 +468,7 @@ const WaaromSection = () => {
                 <div className="flex max-w-3xl flex-col gap-4 md:gap-5">
                     <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Waarom Ostyn</p>
                     <h2 id="waarom-titel" className="text-display-sm font-medium text-balance text-black md:text-display-md">
-                        Drie redenen waarom <strong className="font-extrabold">pooleigenaars</strong> voor ons kiezen.
+                        Drie redenen waarom <strong className="font-extrabold">tuinliefhebbers</strong> voor ons kiezen.
                     </h2>
                 </div>
 
@@ -498,17 +499,17 @@ const steps: Step[] = [
     {
         num: "01",
         title: "Adviesgesprek",
-        body: "In onze showroom in Dottenijs of bij u thuis. We luisteren, kijken naar uw woning en geven concreet advies — zonder verkoopdruk.",
+        body: "In onze showroom in Dottenijs of bij u thuis. We luisteren, kijken naar uw tuin en geven concreet advies — zonder verkoopdruk.",
     },
     {
         num: "02",
         title: "3D-ontwerp en offerte op maat",
-        body: "U ziet uw poolhouse in 3D vóór u tekent. De offerte is gedetailleerd en transparant. Wat we afspreken, blijft staan — geen meerwerk dat halverwege opduikt.",
+        body: "U ziet uw tuinhuis in 3D vóór u tekent. De offerte is gedetailleerd en transparant. Wat we afspreken, blijft staan — geen meerwerk dat halverwege opduikt.",
     },
     {
         num: "03",
         title: "Productie in eigen atelier",
-        body: "Uw poolhouse wordt door onze vaklui in Dottenijs gebouwd. Geen onderaanneming betekent: geen verborgen kosten en geen verschuiven van verantwoordelijkheid.",
+        body: "Uw tuinhuis wordt door onze vaklui in Dottenijs gebouwd. Geen onderaanneming betekent: geen verborgen kosten en geen verschuiven van verantwoordelijkheid.",
     },
     {
         num: "04",
@@ -532,8 +533,8 @@ const ProcesSection = () => {
                         Van eerste gesprek tot oplevering — <strong className="font-extrabold">zonder verrassingen</strong>.
                     </h2>
                     <p className="text-lg text-black">
-                        U weet vooraf hoe uw poolhouse eruit ziet, wat het kost, en wanneer het klaar is. De afgesproken prijs houdt
-                        stand.
+                        U weet vooraf hoe uw tuinhuis eruit ziet, wat het kost, en wanneer het klaar is. De afgesproken prijs
+                        houdt stand.
                     </p>
                 </div>
 
@@ -574,9 +575,9 @@ const testimonials: Testimonial[] = [
     {
         id: "t-devos",
         title: "Een dikke pluim aan al uw medewerkers",
-        quote: "Naar aanleiding van de aankoop van een poolhouse bij uw bedrijf, zouden wij toch een dikke pluim willen geven aan al uw medewerkers!",
+        quote: "Naar aanleiding van de aankoop van een tuinhuis bij uw bedrijf, zouden wij toch een dikke pluim willen geven aan al uw medewerkers!",
         author: "Familie Devos",
-        project: "Poolhouse · 2024",
+        project: "Tuinhuis · 2024",
         avatar: "https://www.untitledui.com/images/avatars/nikolas-gibbons?fm=webp&q=80",
     },
     {
@@ -584,7 +585,7 @@ const testimonials: Testimonial[] = [
         title: "Zelden zulke gedreven vaklui gezien",
         quote: "Ik heb zelden zulke bekwame, gedreven en vriendelijke vaklui aan het werk gezien!",
         author: "Mr. Palsterman",
-        project: "Garage · 2023",
+        project: "Tuinhuis · 2023",
         avatar: "https://www.untitledui.com/images/avatars/marco-kelly?fm=webp&q=80",
     },
     {
@@ -592,7 +593,7 @@ const testimonials: Testimonial[] = [
         title: "Onze tuin oogt nu als een vakantieresort",
         quote: "De Afrormosia hardhout veroudert prachtig. Onze tuin oogt nu als een vakantieresort, en de buren komen het regelmatig bewonderen.",
         author: "Familie Vandeputte",
-        project: "Poolhouse · 2023",
+        project: "Tuinhuis · 2023",
         avatar: "https://www.untitledui.com/images/avatars/owen-garcia?fm=webp&q=80",
     },
     {
@@ -600,7 +601,7 @@ const testimonials: Testimonial[] = [
         title: "Het 3D-ontwerp gaf ons vertrouwen",
         quote: "Het 3D-ontwerp gaf ons echt vertrouwen om de stap te zetten. Het resultaat ziet er nog mooier uit dan op de tekening.",
         author: "Familie Vermeulen",
-        project: "Poolhouse · 2024",
+        project: "Tuinhuis · 2024",
         avatar: "https://www.untitledui.com/images/avatars/ammar-foley?fm=webp&q=80",
     },
     {
@@ -622,9 +623,9 @@ const testimonials: Testimonial[] = [
     {
         id: "t-cornelis",
         title: "De offerte klopte tot op de euro",
-        quote: "We dachten dat een poolhouse op maat onbetaalbaar zou zijn. Bij Ostyn klopte de offerte tot op de euro — geen verrassingen achteraf.",
+        quote: "We dachten dat een tuinhuis op maat onbetaalbaar zou zijn. Bij Ostyn klopte de offerte tot op de euro — geen verrassingen achteraf.",
         author: "Familie Cornelis",
-        project: "Poolhouse · 2023",
+        project: "Tuinhuis · 2023",
         avatar: "https://www.untitledui.com/images/avatars/mathilde-lewis?fm=webp&q=80",
     },
     {
@@ -640,7 +641,7 @@ const testimonials: Testimonial[] = [
         title: "Nazorg waar zij het initiatief nemen",
         quote: "Het SAV-team belde uit zichzelf na een half jaar om alles na te kijken. Dat zegt veel over hoe ze nazorg invullen.",
         author: "Mevr. Verhoeven",
-        project: "Poolhouse · 2022",
+        project: "Tuinhuis · 2022",
         avatar: "https://www.untitledui.com/images/avatars/harriet-rojas?fm=webp&q=80",
     },
 ];
@@ -774,7 +775,7 @@ const NazorgSection = () => {
                             Ons werk stopt <strong className="font-extrabold">niet</strong> bij de oplevering.
                         </h2>
                         <p className="text-lg text-black">
-                            Een poolhouse is een investering voor decennia. U mag verwachten dat de partner die hem bouwt, er ook
+                            Een tuinhuis is een investering voor decennia. U mag verwachten dat de partner die hem bouwt, er ook
                             over tien jaar nog is.
                         </p>
                         <p className="mt-2 text-md text-black/70">
@@ -840,8 +841,9 @@ const ShowroomSection = () => {
                         Kom langs in <strong className="font-extrabold">Dottenijs</strong>.
                     </h2>
                     <p className="mt-4 text-lg text-white md:mt-5">
-                        <strong className="font-semibold">3.000 m² overdekt</strong>, zeven dagen op zeven open. Poolhouses, veranda&apos;s,
-                        carports en tuinkamers op ware grootte. Materialen die u kunt voelen — Afrormosia, Trespa, Aquapanel.
+                        <strong className="font-semibold">3.000 m² overdekt</strong>, zeven dagen op zeven open. Tuinhuizen,
+                        veranda&apos;s, carports en tuinkamers op ware grootte. Materialen die u kunt voelen — Afrormosia, Trespa,
+                        Aquapanel.
                     </p>
                     <ul className="mt-8 flex flex-col gap-4 text-md text-white">
                         <li className="flex items-start gap-3">
@@ -883,10 +885,10 @@ const OfferteSection = () => {
                 <div className="flex flex-col gap-4 lg:sticky lg:top-28 lg:self-start">
                     <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Offerte aanvragen</p>
                     <h2 id="cta-titel" className="text-display-sm font-medium text-balance text-black md:text-display-md">
-                        Klaar om uw poolhouse <strong className="font-extrabold">concreet</strong> te maken?
+                        Klaar om uw tuinhuis <strong className="font-extrabold">concreet</strong> te maken?
                     </h2>
                     <p className="text-lg text-black">
-                        Vraag uw <strong className="font-semibold">gratis offerte</strong> aan voor uw poolhouse. Vrijblijvend, zonder
+                        Vraag uw <strong className="font-semibold">gratis offerte</strong> aan voor uw tuinhuis. Vrijblijvend, zonder
                         verkoopdruk, met antwoord binnen 2 werkdagen.
                     </p>
 
@@ -939,7 +941,7 @@ const OfferteSection = () => {
                     <TextArea
                         label="Vertel ons over uw project (optioneel)"
                         name="bericht"
-                        placeholder="Bv. afmetingen pool, gewenste functies, timing…"
+                        placeholder="Bv. afmetingen, gewenste functies (atelier, berging, kantoor…), timing…"
                         rows={4}
                     />
                     <Checkbox
@@ -990,8 +992,8 @@ const faqItems: FaqItem[] = [
         q: "Hoe lang duurt een project van eerste gesprek tot oplevering?",
         a: (
             <>
-                Reken gemiddeld op <strong className="font-semibold">3 tot 6 maanden</strong>, afhankelijk van complexiteit en
-                planning. Na goedkeuring van het 3D-ontwerp en de definitieve offerte volgt 8 tot 12 weken productie in eigen
+                Reken gemiddeld op <strong className="font-semibold">2 tot 4 maanden</strong>, afhankelijk van complexiteit en
+                planning. Na goedkeuring van het 3D-ontwerp en de definitieve offerte volgt 6 tot 10 weken productie in eigen
                 atelier en plaatsing door onze eigen teams.
             </>
         ),
@@ -1001,18 +1003,28 @@ const faqItems: FaqItem[] = [
         a: (
             <>
                 Adviesgesprek → 3D-ontwerp → gedetailleerde offerte → productie in eigen atelier → plaatsing → oplevering. U ziet
-                uw poolhouse in 3D vóór u tekent en de afgesproken prijs houdt stand —{" "}
+                uw tuinhuis in 3D vóór u tekent en de afgesproken prijs houdt stand —{" "}
                 <strong className="font-semibold">geen meerwerk halverwege</strong>.
             </>
         ),
     },
     {
-        q: "Wat onderscheidt Ostyn van andere poolhousebouwers?",
+        q: "Wat onderscheidt Ostyn van een tuinhuis uit de doos?",
         a: (
             <>
-                Eigen ontwerp, eigen atelier in Dottenijs, eigen plaatsingsteams en een intern SAV-team. Geen onderaanneming,
-                geen tussenpartij. <strong className="font-semibold">Eén keten van verantwoordelijkheid</strong> — ook jaren na de
-                oplevering.
+                Elk tuinhuis wordt op maat ontworpen voor uw tuin en woning — geen catalogusmodel waar u zelf aan moet
+                schaven. Eigen ontwerp, eigen atelier in Dottenijs, eigen plaatsingsteams en een intern SAV-team.{" "}
+                <strong className="font-semibold">Eén keten van verantwoordelijkheid</strong>, ook jaren na de oplevering.
+            </>
+        ),
+    },
+    {
+        q: "Heb ik een vergunning nodig voor mijn tuinhuis?",
+        a: (
+            <>
+                Dat hangt af van afmetingen, locatie en gemeente. Voor de meeste tuinhuizen is een{" "}
+                <strong className="font-semibold">melding</strong> voldoende; voor grotere of bijzondere constructies een
+                omgevingsvergunning. We loodsen u door het traject en bezorgen de bouwplannen voor uw dossier.
             </>
         ),
     },
@@ -1020,8 +1032,8 @@ const faqItems: FaqItem[] = [
         q: "Komen jullie aan huis voor een adviesgesprek?",
         a: (
             <>
-                Ja. We komen graag bij u langs om uw woning, terrein en pool te zien. Een bezoek aan onze showroom in Dottenijs
-                kan natuurlijk ook — 3.000 m² overdekt, zeven dagen op zeven open.
+                Ja. We komen graag bij u langs om uw woning en tuin te zien. Een bezoek aan onze showroom in Dottenijs kan
+                natuurlijk ook — 3.000 m² overdekt, zeven dagen op zeven open.
             </>
         ),
     },
@@ -1038,7 +1050,7 @@ const faqItems: FaqItem[] = [
         q: "Welke types projecten realiseren jullie?",
         a: (
             <>
-                Poolhouses, tuinhuizen, carports, garages, veranda&apos;s, pergola&apos;s en aanverwante tuinconstructies. Telkens
+                Tuinhuizen, poolhouses, carports, garages, veranda&apos;s, pergola&apos;s en aanverwante tuinconstructies. Telkens
                 op maat ontworpen en in eigen atelier gebouwd.
             </>
         ),
@@ -1177,7 +1189,7 @@ const OstynFooter = () => {
     );
 };
 
-const LandingPage17 = () => {
+const LandingPageTuinhuis = () => {
     return (
         <div className="bg-white">
             <OstynHeader />
@@ -1200,4 +1212,4 @@ const LandingPage17 = () => {
     );
 };
 
-export default LandingPage17;
+export default LandingPageTuinhuis;
