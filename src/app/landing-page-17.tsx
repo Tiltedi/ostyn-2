@@ -754,7 +754,7 @@ const ShowroomSection = () => {
                         </li>
                     </ul>
                     <div className="mt-10 flex flex-col-reverse gap-3 sm:flex-row">
-                        <Button href="#inspiratieboek" color="secondary" size="xl" iconTrailing={ArrowUpRight}>
+                        <Button href="/inspiratieboek" color="secondary" size="xl" iconTrailing={ArrowUpRight}>
                             Download het inspiratieboek
                         </Button>
                         <Button href="#offerte" size="xl" iconTrailing={ArrowRight} className="!bg-black !text-white hover:!bg-black/85">
@@ -869,12 +869,10 @@ const OfferteSection = () => {
                 </form>
             </div>
 
-            <p id="inspiratieboek" className="mx-auto mt-12 max-w-container px-4 text-center text-md text-black md:px-8">
+            <p className="mx-auto mt-12 max-w-container px-4 text-center text-md text-black md:px-8">
                 Liever eerst wat inspiratie?{" "}
                 <a
-                    href="https://ostyn.be/inspiratieboek"
-                    target="_blank"
-                    rel="noopener"
+                    href="/inspiratieboek"
                     className="font-semibold text-black underline underline-offset-4"
                 >
                     Download het inspiratieboek →
