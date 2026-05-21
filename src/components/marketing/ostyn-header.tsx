@@ -10,7 +10,7 @@ const productNav: { label: string; href: string; slug?: ProductSlug }[] = [
     { label: "tuinhuis", href: "/tuinhuis", slug: "tuinhuis" },
     { label: "carport", href: "#", slug: "carport" },
     { label: "garage", href: "#", slug: "garage" },
-    { label: "poolhouse", href: "/", slug: "poolhouse" },
+    { label: "poolhouse", href: "/poolhouse", slug: "poolhouse" },
     { label: "veranda", href: "#", slug: "veranda" },
     { label: "pergola", href: "#", slug: "pergola" },
     { label: "realisaties", href: "#realisaties" },

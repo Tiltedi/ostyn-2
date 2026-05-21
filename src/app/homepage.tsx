@@ -1,0 +1,751 @@
+"use client";
+
+import { useEffect, useRef, type FC, type ReactNode } from "react";
+import {
+    ArrowLeft,
+    ArrowRight,
+    ArrowUpRight,
+    Calendar,
+    Check,
+    Mail01,
+    MarkerPin01,
+    Phone,
+    Send01,
+} from "@untitledui/icons";
+import { Carousel } from "@/components/application/carousel/carousel-base";
+import { Button } from "@/components/base/buttons/button";
+import { Checkbox } from "@/components/base/checkbox/checkbox";
+import { Input } from "@/components/base/input/input";
+import { TextArea } from "@/components/base/textarea/textarea";
+import { OstynFooter } from "@/components/marketing/ostyn-footer";
+import { OstynHeader } from "@/components/marketing/ostyn-header";
+import { cx } from "@/utils/cx";
+
+type ProductCard = { label: string; href: string; image: string; alt: string };
+
+const productCards: ProductCard[] = [
+    {
+        label: "Tuinhuis",
+        href: "/tuinhuis",
+        image: "/tuinhuis/hero.jpg",
+        alt: "Tuinhuis op maat in Afrormosia hardhout",
+    },
+    {
+        label: "Carport",
+        href: "#",
+        image: "https://images.unsplash.com/photo-1632323093594-3b5e0d3a1f3d?w=900&h=1200&fit=crop&q=80",
+        alt: "Carport op maat met houtafwerking",
+    },
+    {
+        label: "Garage",
+        href: "#",
+        image: "https://images.unsplash.com/photo-1597047084897-51e81819a499?w=900&h=1200&fit=crop&q=80",
+        alt: "Garage op maat in moderne stijl",
+    },
+    {
+        label: "Poolhouse",
+        href: "/poolhouse",
+        image: "/poolhouse/hero.jpg",
+        alt: "Poolhouse op maat bij privézwembad",
+    },
+    {
+        label: "Veranda",
+        href: "#",
+        image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=900&h=1200&fit=crop&q=80",
+        alt: "Veranda op maat met glazen schuifpartijen",
+    },
+    {
+        label: "Pergola",
+        href: "#",
+        image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=900&h=1200&fit=crop&q=80",
+        alt: "Pergola met lamellendak boven terras",
+    },
+];
+
+const HeroSection = () => {
+    return (
+        <section className="bg-white pt-10 pb-16 md:pt-14 md:pb-24" aria-labelledby="home-titel">
+            <div className="mx-auto max-w-container px-4 md:px-8">
+                <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+                    <p className="text-sm font-semibold tracking-wider text-[#C19848] uppercase md:text-md">
+                        Sinds 1992 · Familiebedrijf in Dottenijs
+                    </p>
+                    <h1
+                        id="home-titel"
+                        className="mt-4 text-display-md font-medium text-balance text-black md:text-display-lg"
+                    >
+                        Premium <strong className="font-extrabold">tuinconstructies</strong> voor wie het verschil ziet.
+                    </h1>
+                    <p className="mt-5 text-lg text-black md:text-xl">
+                        Poolhouses, tuinhuizen, carports, garages, veranda&apos;s en pergola&apos;s — ontworpen, in eigen atelier
+                        gebouwd en geplaatst door onze eigen teams.
+                    </p>
+                    <div className="mt-8 flex flex-col gap-3 sm:flex-row md:mt-10">
+                        <Button href="#offerte" size="xl" iconTrailing={ArrowRight}>
+                            Vraag uw offerte aan
+                        </Button>
+                        <Button href="/inspiratieboek" color="secondary" size="xl" iconTrailing={ArrowUpRight}>
+                            Download inspiratieboek
+                        </Button>
+                    </div>
+                </div>
+
+                <ul className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-16 lg:grid-cols-3 lg:gap-6">
+                    {productCards.map((card) => (
+                        <li key={card.label}>
+                            <a
+                                href={card.href}
+                                aria-label={`Naar ${card.label}`}
+                                className="group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-[#F2F2F2] outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2"
+                            >
+                                <img
+                                    src={card.image}
+                                    alt={card.alt}
+                                    className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                                />
+                                <div
+                                    aria-hidden="true"
+                                    className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent"
+                                />
+                                <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-3">
+                                    <span className="text-2xl font-semibold text-white md:text-display-xs">{card.label}</span>
+                                    <ArrowUpRight
+                                        aria-hidden="true"
+                                        className="size-5 text-white opacity-80 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100 md:size-6"
+                                    />
+                                </div>
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </section>
+    );
+};
+
+type Pillar = { figure: string; eyebrow: string; title: string; body: ReactNode };
+const pillars: Pillar[] = [
+    {
+        figure: "1992",
+        eyebrow: "Sinds 1992",
+        title: "33 jaar familiebedrijf",
+        body: (
+            <>
+                <p>
+                    Ostyn is sinds <strong className="font-semibold">1992</strong> een familiebedrijf, opgericht door{" "}
+                    <strong className="font-semibold">Yvan Ostyn</strong> en vandaag voortgezet door zijn zonen{" "}
+                    <strong className="font-semibold">Thomas</strong> en <strong className="font-semibold">Laurens</strong>. Sinds 2023
+                    brengen we <strong className="font-semibold">Veranclassic</strong> en <strong className="font-semibold">Poolhouse Plaza</strong>{" "}
+                    samen onder één naam.
+                </p>
+                <p className="mt-3 text-sm italic text-black/70 md:text-md">
+                    &ldquo;Alles blijft hetzelfde, behalve de naam.&rdquo;
+                </p>
+            </>
+        ),
+    },
+    {
+        figure: "100%",
+        eyebrow: "Niets uitbesteed",
+        title: "Eigen atelier",
+        body: (
+            <p>
+                Elke constructie wordt door <strong className="font-semibold">onze eigen vaklui</strong> gebouwd in ons atelier
+                in <strong className="font-semibold">Dottenijs</strong>. Geen onderaanneming, geen tussenpartij. Eén keten van
+                verantwoordelijkheid — van eerste schets tot laatste schroef.
+            </p>
+        ),
+    },
+    {
+        figure: "3.000 m²",
+        eyebrow: "Open 7/7",
+        title: "Grootste showroom in België",
+        body: (
+            <p>
+                De <strong className="font-semibold">grootste overdekte showroom</strong> voor tuinconstructies in België en
+                Noord-Frankrijk. <strong className="font-semibold">Zeven dagen op zeven</strong> open — ook tijdens weekends en
+                feestdagen. Materialen bekijkt u op ware grootte, naast elkaar.
+            </p>
+        ),
+    },
+];
+
+const WaaromSection = () => {
+    return (
+        <section id="waarom" className="bg-[#F2F2F2] py-16 md:py-24" aria-labelledby="waarom-titel">
+            <div className="mx-auto max-w-container px-4 md:px-8">
+                <div className="flex max-w-3xl flex-col gap-4 md:gap-5">
+                    <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Waarom Ostyn</p>
+                    <h2 id="waarom-titel" className="text-display-sm font-medium text-balance text-black md:text-display-md">
+                        Drie redenen waarom <strong className="font-extrabold">klanten</strong> voor ons kiezen.
+                    </h2>
+                </div>
+
+                <ul className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-3 md:gap-8">
+                    {pillars.map((p) => (
+                        <li key={p.title} className="flex flex-col rounded-2xl bg-white p-8 md:p-10">
+                            <p className="text-display-md font-extrabold tracking-tight text-black md:text-display-lg">
+                                {p.figure}
+                            </p>
+                            <div className="mt-8 border-t border-black/10 pt-6">
+                                <p className="text-xs font-semibold tracking-wider text-black uppercase">{p.eyebrow}</p>
+                                <h3 className="mt-2 text-xl font-semibold text-black md:text-display-xs">{p.title}</h3>
+                            </div>
+                            <div className="mt-4 text-md text-black/70">{p.body}</div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </section>
+    );
+};
+
+type Project = {
+    id: string;
+    title: string;
+    subtitle: string;
+    image: string;
+    tag: string;
+};
+
+const projects: Project[] = [
+    {
+        id: "p1",
+        title: "Modern minimalistisch",
+        subtitle: "Afrormosia hardhout, schuifpartijen op volle hoogte, plat dak.",
+        image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=900&h=1200&fit=crop&q=80",
+        tag: "Poolhouse",
+    },
+    {
+        id: "p2",
+        title: "Klassiek silhouet",
+        subtitle: "Trespa-panelen, zadeldak, geïntegreerde berging.",
+        image: "https://images.unsplash.com/photo-1505873242700-f289a29e1e0f?w=900&h=1200&fit=crop&q=80",
+        tag: "Tuinhuis",
+    },
+    {
+        id: "p3",
+        title: "Open architectuur",
+        subtitle: "Buitenkeuken, lounge en schaduwzone in één volume.",
+        image: "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=900&h=1200&fit=crop&q=80",
+        tag: "Pergola",
+    },
+    {
+        id: "p4",
+        title: "Strak en compact",
+        subtitle: "Aluminium accenten, vlakke gevel, geïntegreerd terras.",
+        image: "https://images.unsplash.com/photo-1564540583246-934409427776?w=900&h=1200&fit=crop&q=80",
+        tag: "Veranda",
+    },
+    {
+        id: "p5",
+        title: "Hout en pleisterwerk",
+        subtitle: "Hybride stijl die aansluit bij een klassieke villa.",
+        image: "https://images.unsplash.com/photo-1600585154084-4e5fe7c39198?w=900&h=1200&fit=crop&q=80",
+        tag: "Carport",
+    },
+    {
+        id: "p6",
+        title: "Schaduw en functie",
+        subtitle: "Overdekt terras, kleedruimte en buitendouche.",
+        image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900&h=1200&fit=crop&q=80",
+        tag: "Garage",
+    },
+];
+
+const RoundButton = ({
+    icon: Icon,
+    className,
+    ...props
+}: {
+    icon: FC<{ className?: string }>;
+    className?: string;
+    "aria-label"?: string;
+}) => (
+    <Button
+        {...props}
+        color="link-gray"
+        className={cx(
+            "group flex size-12 items-center justify-center rounded-full bg-white ring-1 ring-black/15 backdrop-blur transition duration-100 ease-linear ring-inset hover:bg-[#F2F2F2] md:size-14",
+            className,
+        )}
+    >
+        <Icon className="size-5 text-black transition-inherit-all md:size-6" />
+    </Button>
+);
+
+const RealisatiesSection = () => {
+    return (
+        <section
+            id="realisaties"
+            className="overflow-hidden bg-white py-16 md:py-24"
+            aria-labelledby="realisaties-titel"
+        >
+            <div className="mx-auto max-w-container px-4 md:px-8">
+                <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end lg:gap-12">
+                    <div className="flex max-w-3xl flex-col gap-4">
+                        <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Realisaties</p>
+                        <h2 id="realisaties-titel" className="text-display-sm font-medium text-balance text-black md:text-display-md">
+                            Elk project ontworpen op <strong className="font-extrabold">maat</strong> van de woning.
+                        </h2>
+                        <p className="text-lg text-black">
+                            Een greep uit onze realisaties — poolhouses, tuinhuizen, carports, veranda&apos;s en pergola&apos;s,
+                            modern of klassiek.
+                        </p>
+                    </div>
+
+                    <Button href="#offerte" size="xl" iconTrailing={ArrowRight} className="self-start lg:self-end">
+                        Vraag uw gratis offerte aan
+                    </Button>
+                </div>
+
+                <Carousel.Root className="mt-12 md:mt-16" opts={{ align: "start" }}>
+                    <Carousel.Content overflowHidden={false} className="gap-6 pr-4 md:gap-8 md:pr-8">
+                        {projects.map((project) => (
+                            <Carousel.Item
+                                key={project.id}
+                                className="group relative flex h-118 max-w-76 shrink-0 cursor-grab items-end overflow-hidden rounded-2xl bg-[#F2F2F2] md:h-126 md:w-full md:max-w-sm"
+                            >
+                                <img
+                                    src={project.image}
+                                    alt={project.title}
+                                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+                                <div className="relative flex w-full flex-col gap-3 p-6 md:p-8">
+                                    <span className="self-start rounded-full bg-[#C19848] px-3 py-1 text-xs font-semibold text-white">
+                                        {project.tag}
+                                    </span>
+                                    <p className="text-display-xs font-semibold text-white md:text-display-sm">{project.title}</p>
+                                    <p className="text-md text-white/90">{project.subtitle}</p>
+                                </div>
+                            </Carousel.Item>
+                        ))}
+                    </Carousel.Content>
+
+                    <div className="mt-8 flex gap-4 md:gap-8">
+                        <Carousel.PrevTrigger asChild>
+                            <RoundButton icon={ArrowLeft} aria-label="Vorige realisatie" />
+                        </Carousel.PrevTrigger>
+                        <Carousel.NextTrigger asChild>
+                            <RoundButton icon={ArrowRight} aria-label="Volgende realisatie" />
+                        </Carousel.NextTrigger>
+                    </div>
+                </Carousel.Root>
+            </div>
+        </section>
+    );
+};
+
+const ShowroomSection = () => {
+    const canvasRef = useRef<HTMLDivElement>(null);
+    const imgRef = useRef<HTMLImageElement>(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const img = imgRef.current;
+        if (!canvas || !img) return;
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        let ticking = false;
+        const update = () => {
+            const rect = canvas.getBoundingClientRect();
+            if (rect.bottom > 0 && rect.top < window.innerHeight) {
+                img.style.transform = `translate3d(0, ${(-rect.top * 0.15).toFixed(1)}px, 0)`;
+            }
+            ticking = false;
+        };
+        const onScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(update);
+        };
+
+        update();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onScroll);
+        return () => {
+            window.removeEventListener("scroll", onScroll);
+            window.removeEventListener("resize", onScroll);
+        };
+    }, []);
+
+    return (
+        <section id="showroom" className="bg-[#C19848] py-16 md:py-24" aria-labelledby="showroom-titel">
+            <div className="mx-auto grid max-w-container grid-cols-1 gap-12 px-4 md:px-8 lg:grid-cols-2 lg:items-center lg:gap-16">
+                <div className="flex flex-col">
+                    <p className="text-sm font-semibold tracking-wider text-white uppercase md:text-md">Showroom</p>
+                    <h2 id="showroom-titel" className="mt-3 text-display-sm font-medium text-balance text-white md:text-display-md">
+                        Kom langs in <strong className="font-extrabold">Dottenijs</strong>.
+                    </h2>
+                    <p className="mt-4 text-lg text-white md:mt-5">
+                        <strong className="font-semibold">3.000 m² overdekt</strong>, zeven dagen op zeven open. Poolhouses, veranda&apos;s,
+                        carports en tuinkamers op ware grootte. Materialen die u kunt voelen — Afrormosia, Trespa, Aquapanel.
+                    </p>
+                    <ul className="mt-8 flex flex-col gap-4 text-md text-white">
+                        <li className="flex items-start gap-3">
+                            <MarkerPin01 className="mt-0.5 size-5 shrink-0 text-white" />
+                            <span>Engelse Wandeling 2, 7711 Dottenijs (Mouscron)</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <Calendar className="mt-0.5 size-5 shrink-0 text-white" />
+                            <span>7 dagen op 7 open — ook tijdens weekends en feestdagen</span>
+                        </li>
+                    </ul>
+                    <div className="mt-10 flex flex-col-reverse gap-3 sm:flex-row">
+                        <Button href="/inspiratieboek" color="secondary" size="xl" iconTrailing={ArrowUpRight}>
+                            Download het inspiratieboek
+                        </Button>
+                        <Button href="#offerte" size="xl" iconTrailing={ArrowRight} className="!bg-black !text-white hover:!bg-black/85">
+                            Vraag uw offerte aan
+                        </Button>
+                    </div>
+                </div>
+
+                <div ref={canvasRef} className="relative aspect-square overflow-hidden rounded-2xl">
+                    <img
+                        ref={imgRef}
+                        src="/showroom.jpg"
+                        alt="Adviesgesprek in de Ostyn showroom in Dottenijs"
+                        className="absolute inset-x-0 -top-[20%] h-[140%] w-full object-cover will-change-transform"
+                    />
+                </div>
+            </div>
+        </section>
+    );
+};
+
+type Testimonial = {
+    id: string;
+    title: string;
+    quote: string;
+    author: string;
+    project: string;
+    avatar: string;
+};
+
+const testimonials: Testimonial[] = [
+    {
+        id: "t-devos",
+        title: "Een dikke pluim aan al uw medewerkers",
+        quote: "Naar aanleiding van de aankoop van een poolhouse bij uw bedrijf, zouden wij toch een dikke pluim willen geven aan al uw medewerkers!",
+        author: "Familie Devos",
+        project: "Poolhouse · 2024",
+        avatar: "https://www.untitledui.com/images/avatars/nikolas-gibbons?fm=webp&q=80",
+    },
+    {
+        id: "t-palsterman",
+        title: "Zelden zulke gedreven vaklui gezien",
+        quote: "Ik heb zelden zulke bekwame, gedreven en vriendelijke vaklui aan het werk gezien!",
+        author: "Mr. Palsterman",
+        project: "Garage · 2023",
+        avatar: "https://www.untitledui.com/images/avatars/marco-kelly?fm=webp&q=80",
+    },
+    {
+        id: "t-vandeputte",
+        title: "Onze tuin oogt nu als een vakantieresort",
+        quote: "De Afrormosia hardhout veroudert prachtig. Onze tuin oogt nu als een vakantieresort, en de buren komen het regelmatig bewonderen.",
+        author: "Familie Vandeputte",
+        project: "Poolhouse · 2023",
+        avatar: "https://www.untitledui.com/images/avatars/owen-garcia?fm=webp&q=80",
+    },
+    {
+        id: "t-vermeulen",
+        title: "Het 3D-ontwerp gaf ons vertrouwen",
+        quote: "Het 3D-ontwerp gaf ons echt vertrouwen om de stap te zetten. Het resultaat ziet er nog mooier uit dan op de tekening.",
+        author: "Familie Vermeulen",
+        project: "Tuinhuis · 2024",
+        avatar: "https://www.untitledui.com/images/avatars/ammar-foley?fm=webp&q=80",
+    },
+    {
+        id: "t-debacker",
+        title: "Eén aanspreekpunt van begin tot eind",
+        quote: "Geen enkele keer moest ik bellen voor een update — zij belden mij. Dat scheelt rust en planning thuis enorm.",
+        author: "Mevr. De Backer",
+        project: "Pergola · 2024",
+        avatar: "https://www.untitledui.com/images/avatars/florence-shaw?fm=webp&q=80",
+    },
+    {
+        id: "t-lechantre",
+        title: "We hadden gelijk om hen te vertrouwen",
+        quote: "We hadden gelijk om jullie bedrijf te vertrouwen. Het werk werd correct, op tijd en met zorg afgewerkt.",
+        author: "Mr. & Mevr. Lechantre",
+        project: "Carport · 2023",
+        avatar: "https://www.untitledui.com/images/avatars/zaid-schwartz?fm=webp&q=80",
+    },
+    {
+        id: "t-cornelis",
+        title: "De offerte klopte tot op de euro",
+        quote: "We dachten dat een poolhouse op maat onbetaalbaar zou zijn. Bij Ostyn klopte de offerte tot op de euro — geen verrassingen achteraf.",
+        author: "Familie Cornelis",
+        project: "Poolhouse · 2023",
+        avatar: "https://www.untitledui.com/images/avatars/mathilde-lewis?fm=webp&q=80",
+    },
+    {
+        id: "t-janssens",
+        title: "Strakke planning, indrukwekkend nageleefd",
+        quote: "Drie maanden van schets tot oplevering. Indrukwekkend hoe strak de planning werd nageleefd, ook bij de afwerking.",
+        author: "Mr. Janssens",
+        project: "Veranda · 2024",
+        avatar: "https://www.untitledui.com/images/avatars/stefan-sears?fm=webp&q=80",
+    },
+    {
+        id: "t-verhoeven",
+        title: "Nazorg waar zij het initiatief nemen",
+        quote: "Het SAV-team belde uit zichzelf na een half jaar om alles na te kijken. Dat zegt veel over hoe ze nazorg invullen.",
+        author: "Mevr. Verhoeven",
+        project: "Poolhouse · 2022",
+        avatar: "https://www.untitledui.com/images/avatars/harriet-rojas?fm=webp&q=80",
+    },
+];
+
+const testimonialRows: Testimonial[][] = [testimonials.slice(0, 5), testimonials.slice(5)];
+
+const QuoteGlyph = ({ className }: { className?: string }) => (
+    <svg aria-hidden="true" viewBox="0 0 32 24" className={className}>
+        <path
+            fill="currentColor"
+            d="M9.5 24c-2.6 0-4.7-.8-6.4-2.5C1.4 19.7.5 17.5.5 14.8c0-4.5 1.9-8.6 5.7-12.4L8 0l3.5 2.7c-1.6 1.6-3 3.1-4.1 4.5-1.1 1.4-1.7 2.7-1.8 3.9 1.3-.2 2.4 0 3.5.6 1 .6 1.8 1.4 2.3 2.4.6 1.1.9 2.2.9 3.4 0 1.9-.6 3.4-1.9 4.6S11.2 24 9.5 24Zm15 0c-2.6 0-4.7-.8-6.4-2.5-1.7-1.7-2.5-4-2.5-6.7 0-4.5 1.9-8.6 5.7-12.4L23 0l3.5 2.7c-1.6 1.6-3 3.1-4.1 4.5-1.1 1.4-1.7 2.7-1.8 3.9 1.3-.2 2.4 0 3.4.6 1.1.6 1.9 1.4 2.4 2.4.6 1.1.9 2.2.9 3.4 0 1.9-.6 3.4-1.9 4.6S26.3 24 24.5 24Z"
+        />
+    </svg>
+);
+
+const TestimonialCard = ({ t }: { t: Testimonial }) => (
+    <figure className="flex w-[280px] shrink-0 flex-col gap-5 rounded-2xl bg-white p-6 shadow-lg sm:w-[340px] md:w-[380px] md:p-7">
+        <h3 className="text-lg font-semibold text-balance text-black md:text-xl">{t.title}</h3>
+        <blockquote className="text-md text-black/70">{t.quote}</blockquote>
+        <figcaption className="mt-auto flex items-end justify-between gap-3 pt-2">
+            <div className="flex items-center gap-3">
+                <img
+                    src={t.avatar}
+                    alt=""
+                    aria-hidden="true"
+                    className="size-10 shrink-0 rounded-full object-cover ring-1 ring-black/5"
+                />
+                <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-black">{t.author}</span>
+                    <span className="text-sm text-black/60">{t.project}</span>
+                </div>
+            </div>
+            <QuoteGlyph className="size-7 shrink-0 text-black/15" />
+        </figcaption>
+    </figure>
+);
+
+const MarqueeRow = ({ items, reverse }: { items: Testimonial[]; reverse?: boolean }) => (
+    <div className="group flex overflow-hidden">
+        {[0, 1].map((i) => (
+            <div
+                key={i}
+                aria-hidden={i === 1 ? "true" : undefined}
+                className={cx(
+                    "flex shrink-0 animate-marquee gap-5 pr-5 motion-reduce:animate-none md:gap-6 md:pr-6",
+                    "group-hover:[animation-play-state:paused]",
+                    reverse && "[animation-direction:reverse]",
+                )}
+            >
+                {items.map((t) => (
+                    <TestimonialCard key={`${i}-${t.id}`} t={t} />
+                ))}
+            </div>
+        ))}
+    </div>
+);
+
+const TestimonialsSection = () => {
+    return (
+        <section
+            className="bg-white px-6 py-16 md:px-12 md:py-24 lg:px-16"
+            aria-labelledby="getuigenissen-titel"
+        >
+            <div className="relative isolate flex flex-col overflow-hidden rounded-3xl">
+                <img
+                    src="/testimonials.jpg"
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 -z-10 h-full w-full object-cover"
+                />
+                <div
+                    aria-hidden="true"
+                    className="absolute inset-0 -z-10 bg-gradient-to-b from-black/45 via-black/15 to-white"
+                />
+
+                <div className="px-6 pt-16 pb-12 md:px-12 md:pt-24 md:pb-16">
+                    <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+                        <span className="rounded-full bg-white px-4 py-1.5 text-sm font-semibold tracking-wider text-black uppercase">
+                            Getuigenissen
+                        </span>
+                        <h2
+                            id="getuigenissen-titel"
+                            className="mt-6 text-display-sm font-medium text-balance text-white md:text-display-md"
+                        >
+                            Wat onze <strong className="font-extrabold">klanten</strong>
+                            <br className="hidden md:inline" /> over ons zeggen.
+                        </h2>
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-5 pb-16 md:gap-6 md:pb-24">
+                    <MarqueeRow items={testimonialRows[0]} />
+                    <MarqueeRow items={testimonialRows[1]} reverse />
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const InspiratieboekTeaser = () => {
+    return (
+        <section className="bg-[#F2F2F2] py-16 md:py-24" aria-labelledby="inspiratieboek-teaser-titel">
+            <div className="mx-auto max-w-container px-4 md:px-8">
+                <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
+                    <div className="flex items-center justify-center lg:justify-start">
+                        <img
+                            src="/Inspiratieboek/inspiratiebrochure_ostyn_cover_extra_schaduw.1600x1600.png"
+                            alt="Ostyn inspiratieboek — cover"
+                            className="h-auto w-full max-w-xs object-contain lg:max-w-sm"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-4 md:gap-5">
+                        <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">
+                            Gratis inspiratieboek
+                        </p>
+                        <h2
+                            id="inspiratieboek-teaser-titel"
+                            className="text-display-sm font-medium text-balance text-black md:text-display-md"
+                        >
+                            Doorblader <strong className="font-extrabold">30 jaar</strong> Ostyn in één boek.
+                        </h2>
+                        <p className="text-lg text-black">
+                            Realisaties, materialen en details uit ruim drie decennia. Vraag uw exemplaar aan en we sturen het
+                            direct in uw mailbox.
+                        </p>
+                        <div className="mt-3">
+                            <Button href="/inspiratieboek" size="xl" iconTrailing={ArrowUpRight}>
+                                Vraag uw inspiratieboek aan
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+const OfferteSection = () => {
+    return (
+        <section id="offerte" className="bg-[#F2F2F2] py-16 md:py-24" aria-labelledby="cta-titel">
+            <div className="mx-auto grid max-w-container grid-cols-1 gap-12 px-4 md:px-8 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
+                <div className="flex flex-col gap-4 lg:sticky lg:top-28 lg:self-start">
+                    <p className="text-sm font-semibold tracking-wider text-black uppercase md:text-md">Offerte aanvragen</p>
+                    <h2 id="cta-titel" className="text-display-sm font-medium text-balance text-black md:text-display-md">
+                        Klaar om uw project <strong className="font-extrabold">concreet</strong> te maken?
+                    </h2>
+                    <p className="text-lg text-black">
+                        Vraag uw <strong className="font-semibold">gratis offerte</strong> aan voor uw project. Vrijblijvend, zonder
+                        verkoopdruk, met antwoord binnen 2 werkdagen.
+                    </p>
+
+                    <ul className="mt-4 flex flex-col gap-3 text-md text-black">
+                        <li className="flex items-start gap-3">
+                            <Check className="mt-0.5 size-5 shrink-0 text-[#C19848]" />
+                            <span>Vrijblijvend, geen verkoopdruk</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <Check className="mt-0.5 size-5 shrink-0 text-[#C19848]" />
+                            <span>Antwoord binnen 2 werkdagen</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                            <Check className="mt-0.5 size-5 shrink-0 text-[#C19848]" />
+                            <span>Gratis 3D-ontwerp bij ondertekening</span>
+                        </li>
+                    </ul>
+
+                    <div className="mt-6 flex flex-col gap-3 border-t border-black/10 pt-6 text-md text-black">
+                        <a href="tel:+3256480480" className="flex items-center gap-3 hover:opacity-80">
+                            <Phone className="size-5 text-[#C19848]" />
+                            <span className="font-semibold">+32 56 48 04 80</span>
+                        </a>
+                        <a href="mailto:info@ostyn.be" className="flex items-center gap-3 hover:opacity-80">
+                            <Mail01 className="size-5 text-[#C19848]" />
+                            <span className="font-semibold">info@ostyn.be</span>
+                        </a>
+                    </div>
+                </div>
+
+                <form
+                    action="#"
+                    method="post"
+                    className="flex flex-col gap-5 rounded-2xl bg-white p-6 md:p-8"
+                >
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <Input label="Voornaam" name="voornaam" placeholder="Voornaam" autoComplete="given-name" isRequired />
+                        <Input label="Naam" name="naam" placeholder="Naam" autoComplete="family-name" isRequired />
+                    </div>
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <Input label="E-mail" type="email" name="email" placeholder="u@voorbeeld.be" autoComplete="email" isRequired />
+                        <Input label="Telefoon" type="tel" name="telefoon" placeholder="+32 …" autoComplete="tel" />
+                    </div>
+                    <Input
+                        label="Postcode & gemeente"
+                        name="locatie"
+                        placeholder="bv. 8500 Kortrijk"
+                        autoComplete="postal-code"
+                    />
+                    <TextArea
+                        label="Vertel ons over uw project (optioneel)"
+                        name="bericht"
+                        placeholder="Bv. type project, afmetingen, gewenste functies, timing…"
+                        rows={4}
+                    />
+                    <Checkbox
+                        name="privacy"
+                        isRequired
+                        label={
+                            <span className="text-sm text-black">
+                                Ik ga akkoord met de verwerking van mijn gegevens volgens de{" "}
+                                <a
+                                    href="https://ostyn.be/privacy"
+                                    target="_blank"
+                                    rel="noopener"
+                                    className="font-semibold text-black underline underline-offset-4"
+                                >
+                                    privacyverklaring
+                                </a>
+                                .
+                            </span>
+                        }
+                    />
+                    <Button type="submit" size="xl" iconTrailing={Send01} className="mt-2">
+                        Vraag uw gratis offerte aan
+                    </Button>
+                    <p className="text-center text-sm text-black/70">
+                        Vrijblijvend · Geen verkoopdruk · Antwoord binnen 2 werkdagen
+                    </p>
+                </form>
+            </div>
+        </section>
+    );
+};
+
+const Homepage = () => {
+    return (
+        <>
+            <OstynHeader />
+            <main>
+                <HeroSection />
+                <WaaromSection />
+                <RealisatiesSection />
+                <ShowroomSection />
+                <TestimonialsSection />
+                <InspiratieboekTeaser />
+                <OfferteSection />
+            </main>
+            <OstynFooter />
+        </>
+    );
+};
+
+export default Homepage;
